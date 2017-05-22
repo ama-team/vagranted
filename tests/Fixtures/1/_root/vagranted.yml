@@ -1,0 +1,11 @@
+dependencies:
+  alpha: ../alpha
+context:
+  current_set: _root
+  _root: 0
+templates:
+  - pattern: '*.twig'
+    name: '{{ basename }}.rendered'
+assets:
+  - '*.asset'
+

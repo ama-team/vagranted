@@ -1,0 +1,3 @@
+{% for key, value in _context %}
+{{ key }}: {{ value|json_encode|raw }}
+{% endfor %}

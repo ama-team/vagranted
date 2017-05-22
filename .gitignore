@@ -4,3 +4,7 @@
 # Composer artifacts
 /composer.lock
 /vendor
+/bin/*
+!/bin/vagranted
+
+tests/Report/*

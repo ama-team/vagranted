@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+$next = __DIR__;
+do {
+    $cursor = $next;
+    $candidate = $cursor . '/vendor/autoload.php';
+    if (file_exists($candidate)) {
+        require_once $candidate;
+        break;
+    }
+    $next = dirname($cursor);
+} while ($next !== $cursor);
+
+if (!class_exists('\AmaTeam\Vagranted\Console\EntryPoint')) {
+    throw new RuntimeException('Could not find Vagranted source files');
+}
+
+\AmaTeam\Vagranted\Console\EntryPoint::main($argv);

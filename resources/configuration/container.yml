@@ -1,0 +1,364 @@
+# Container has to be bootstrapped with:
+# - vagranted.container
+# Optional dependencies are:
+# - vagranted.configuration (AmaTeam\Vagranted\Configuration)
+
+parameters:
+  vagranted.logger.format: "%%datetime%% %%level_name%% %%channel%%: %%message%%\n"
+  vagranted.logger.prefix: 'vagranted.'
+  vagranted.logger.target: 'php://stderr'
+  vagranted.logger.level: 'warning'
+  vagranted.namespaces: ['AmaTeam\Vagranted\']
+
+services:
+  # region vagranted.configuration
+  vagranted.configuration.normalizer:
+    class: AmaTeam\Vagranted\Application\Configuration\Normalizer
+    arguments:
+      - '@vagranted.io.filesystem.project_root_locator'
+  vagranted.configuration.distributor:
+    class: AmaTeam\Vagranted\Application\Configuration\Distributor
+    tags:
+      - name: vagranted.event.producer
+      - name: vagranted.logger.consumer
+  vagranted.configuration.container:
+    class: AmaTeam\Vagranted\Application\Configuration\Container
+    arguments:
+      - '@vagranted.configuration.normalizer'
+      - '@vagranted.configuration.distributor'
+      - '@?vagranted.configuration'
+  # endregion
+
+  # region vagranted
+  vagranted.structure:
+    class: AmaTeam\Vagranted\Filesystem\Structure
+    arguments:
+      - '@vagranted.configuration.container'
+  vagranted.version_provider:
+    class: AmaTeam\Vagranted\Application\VersionProvider
+    arguments:
+      - '@vagranted.structure'
+      - '@vagranted.io.filesystem'
+      - '@vagranted.io.serializer'
+  # endregion
+
+  # region vagranted.event
+  vagranted.event.dispatcher:
+    class: Symfony\Component\EventDispatcher\EventDispatcher
+  # endregion
+
+  # region vagranted.event.subscriber
+  vagranted.event.subscriber.statistics:
+    class: AmaTeam\Vagranted\Event\Subscriber\StatisticsSubscriber
+    tags:
+      - name: vagranted.event.subscriber
+  # endregion
+
+  # region vagranted.io.serializer
+  vagranted.io.serializer:
+    class: Symfony\Component\Serializer\Serializer
+  vagranted.io.serializer.normalizer.default:
+    class: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
+    tags:
+      - name: vagranted.io.serializer.normalizer
+  vagranted.io.serializer.encoder.yaml:
+    class: Symfony\Component\Serializer\Encoder\YamlEncoder
+    arguments:
+      - ~
+      - ~
+      - yaml_inline: 4
+    tags:
+      - name: vagranted.io.serializer.encoder
+  vagranted.io.serializer.encoder.json:
+    class: Symfony\Component\Serializer\Encoder\JsonEncoder
+    tags:
+      - name: vagranted.io.serializer.encoder
+  # endregion
+
+  # region vagranted.io.filesystem
+  vagranted.io.filesystem.helper:
+    class: Symfony\Component\Filesystem\Filesystem
+  vagranted.io.filesystem:
+    class: AmaTeam\Vagranted\Filesystem\Accessor
+    arguments:
+      - '@vagranted.io.filesystem.helper'
+  vagranted.io.filesystem.pattern_locator:
+    class: AmaTeam\Vagranted\Filesystem\PatternLocator
+    arguments:
+      - '@vagranted.io.filesystem'
+      - '@vagranted.twig.inline'
+  vagranted.io.filesystem.project_root_locator:
+    class: AmaTeam\Vagranted\Filesystem\ProjectRootLocator
+    arguments:
+      - '@vagranted.io.filesystem'
+  # endregion
+
+  # region vagranted.logger
+  vagranted.logger.formatter:
+    class: Monolog\Formatter\LineFormatter
+    arguments: [%vagranted.logger.format%]
+  vagranted.logger.processor.psr:
+    class: Monolog\Processor\PsrLogMessageProcessor
+    tags:
+      - name: vagranted.logger.processor
+  vagranted.logger.handler.stdout:
+    class: Monolog\Handler\StreamHandler
+    arguments: ['%vagranted.logger.target%', '%vagranted.logger.level%']
+    calls:
+      - [setFormatter, ['@vagranted.logger.formatter']]
+    tags:
+      - name: vagranted.logger.handler
+  vagranted.logger.factory:
+    class: AmaTeam\Vagranted\Logger\Factory
+    tags:
+      - name: vagranted.reconfigurable
+  vagranted.logger.name_factory:
+    class: AmaTeam\Vagranted\Logger\NameFactory
+    arguments:
+      - %vagranted.namespaces%
+      - %vagranted.logger.prefix%
+  # endregion
+
+  # region vagranted.support
+  vagranted.support.git.factory:
+    class: AmaTeam\Vagranted\Support\Git\Factory
+  # endregion
+
+  # region vagranted.project
+  vagranted.project.loader:
+    class: AmaTeam\Vagranted\Project\Loader
+    arguments:
+      - '@vagranted.resource_set.reader'
+      - '@vagranted.configuration.container'
+  # endregion
+
+  # region vagranted.resource_set
+  vagranted.resource_set.reader:
+    class: AmaTeam\Vagranted\ResourceSet\Reader
+    arguments:
+      - '@vagranted.configuration.container'
+      - '@vagranted.resource_set.configuration.reader'
+      - '@vagranted.io.filesystem.pattern_locator'
+  vagranted.resource_set.loader:
+    class: AmaTeam\Vagranted\ResourceSet\Loader
+    arguments:
+      - '@vagranted.installation.manager'
+      - '@vagranted.resource_set.reader'
+    tags:
+      - name: vagranted.logger.consumer
+  # endregion
+
+  # region vagranted.installation
+  vagranted.installation.loader:
+    class: \AmaTeam\Vagranted\Installation\Loader
+  vagranted.installation.manager:
+    class: AmaTeam\Vagranted\Installation\Manager
+    arguments:
+      - '@vagranted.installation.storage_controller'
+      - '@vagranted.installation.id_factory'
+  vagranted.installation.storage_controller:
+    class: AmaTeam\Vagranted\Installation\StorageController
+    arguments:
+      - '@vagranted.installation.storage'
+      - '@vagranted.installation.installer_collection'
+      - '@vagranted.installation.loader'
+    tags:
+      - name: vagranted.logger.consumer
+      - name: vagranted.event.producer
+  vagranted.installation.storage:
+    class: AmaTeam\Vagranted\Installation\Storage
+    arguments:
+      - '@vagranted.structure'
+      - '@vagranted.io.filesystem'
+  vagranted.installation.id_factory:
+    class: AmaTeam\Vagranted\Installation\IdFactory
+  vagranted.installation.installer_collection:
+    class: AmaTeam\Vagranted\Installation\InstallerCollection
+  vagranted.installation.installer.git:
+    class: AmaTeam\Vagranted\Installation\Installer\GitInstaller
+    arguments:
+      - '@vagranted.configuration.container'
+      - '@vagranted.support.git.factory'
+    tags:
+      - name: vagranted.resource_set.installer
+      - name: vagranted.logger.consumer
+  # endregion
+
+  # region vagranted.installation.aspect
+  vagranted.installation.aspect.specification_loader:
+    class: AmaTeam\Vagranted\Installation\Aspect\SpecificationLoader
+    arguments:
+      - '@vagranted.io.filesystem'
+      - '@vagranted.io.serializer'
+    tags:
+      - name: vagranted.installation.aspect_loader
+  vagranted.installation.aspect.statistics_loader:
+    class: AmaTeam\Vagranted\Installation\Aspect\StatisticsLoader
+    arguments:
+      - '@vagranted.io.filesystem'
+      - '@vagranted.io.serializer'
+    tags:
+      - name: vagranted.installation.aspect_loader
+  vagranted.installation.aspect.resource_set_loader:
+    class: AmaTeam\Vagranted\Installation\Aspect\ResourceSetLoader
+    arguments:
+      - '@vagranted.resource_set.reader'
+    tags:
+      - name: vagranted.installation.aspect_loader
+  vagranted.installation.aspect.manager_collection:
+    class: AmaTeam\Vagranted\ResourceSet\Installed\AspectLoaderCollection
+  # endregion
+
+  # region vagranted.resource_set
+  vagranted.resource_set.configuration.reader:
+    class: AmaTeam\Vagranted\ResourceSet\Configuration\Reader
+    arguments:
+      - '@vagranted.io.filesystem'
+      - '@vagranted.io.serializer'
+  vagranted.resource_set.reader:
+    class: AmaTeam\Vagranted\ResourceSet\Reader
+    arguments:
+      - '@vagranted.resource_set.configuration.reader'
+      - '@vagranted.io.filesystem.pattern_locator'
+  # endregion
+
+  # region vagranted.compilation
+  vagranted.compilation.controller:
+    class: AmaTeam\Vagranted\Compilation\Controller
+    arguments:
+      - '@vagranted.compilation.compiler'
+      - '@vagranted.compilation.context_builder'
+  vagranted.compilation.compiler:
+    class: AmaTeam\Vagranted\Compilation\Compiler
+    arguments:
+      - '@vagranted.compilation.aspect_compiler_collection'
+    tags:
+      - name: vagranted.logger.consumer
+      - name: vagranted.event.producer
+  vagranted.compilation.aspect_compiler_collection:
+    class: AmaTeam\Vagranted\Compilation\AspectCompilerCollection
+    tags:
+      - name: vagranted.event.producer
+  vagranted.compilation.aspect_compiler.asset:
+    class: AmaTeam\Vagranted\Compilation\AssetInstaller
+    arguments:
+      - '@vagranted.io.filesystem'
+    tags:
+      - name: vagranted.logger.consumer
+      - name: vagranted.compilation.aspect_compiler
+  vagranted.compilation.aspect_compiler.template:
+    class: AmaTeam\Vagranted\Compilation\TemplateInstaller
+    arguments:
+      - '@vagranted.twig.contextual.factory'
+      - '@vagranted.io.filesystem'
+    tags:
+      - name: vagranted.logger.consumer
+      - name: vagranted.compilation.aspect_compiler
+  vagranted.compilation.context_builder:
+    class: AmaTeam\Vagranted\Compilation\ContextBuilder
+    arguments:
+      - '@vagranted.resource_set.loader'
+    tags:
+      - name: vagranted.logger.consumer
+  # endregion
+
+  # region vagranted.twig
+  vagranted.twig.inline:
+    class: Twig_Environment
+    arguments:
+      - '@vagranted.twig.inline.loader'
+  vagranted.twig.inline.loader:
+    class: Twig_Loader_Array
+  vagranted.twig.contextual.factory:
+    class: AmaTeam\Vagranted\Twig\Factory
+    arguments:
+      - '@vagranted.io.filesystem'
+      - '@vagranted.structure'
+  vagranted.twig.contextual.extension.debug:
+    class: Twig_Extension_Debug
+    tags:
+      - name: vagranted.twig.extension
+        scope: contextual
+  # endregion
+
+  # region vagranted.api
+  vagranted.api:
+    class: AmaTeam\Vagranted\API
+    arguments:
+      - '@vagranted.container'
+  vagranted.api.compilation:
+    class: AmaTeam\Vagranted\API\CompilationAPI
+    arguments:
+      - '@vagranted.compilation.controller'
+      - '@vagranted.configuration.container'
+      - '@vagranted.project.loader'
+  vagranted.api.resource_set:
+    class: AmaTeam\Vagranted\API\ResourceSetAPI
+    arguments:
+      - '@vagranted.installation.manager'
+      - '@vagranted.resource_set.loader'
+  vagranted.api.installer:
+    class: AmaTeam\Vagranted\API\InstallerAPI
+    arguments:
+      - '@vagranted.installation.installer_collection'
+  # endregion
+
+  # region vagranted.cli
+  vagranted.cli:
+    class: AmaTeam\Vagranted\Console\Application
+    arguments:
+      - '@vagranted.container'
+      - '@vagranted.version_provider'
+    tags:
+      - name: vagranted.event.producer
+  vagranted.cli.command.compile:
+    class: AmaTeam\Vagranted\Console\Command\CompileCommand
+    tags:
+      - name: vagranted.cli.command
+      - name: vagranted.container_aware
+  vagranted.cli.command.configuration.inspect:
+    class: AmaTeam\Vagranted\Console\Command\Installer\InspectCommand
+    tags:
+      - name: vagranted.cli.command
+      - name: vagranted.container_aware
+  vagranted.cli.command.installer.list:
+    class: AmaTeam\Vagranted\Console\Command\Installer\ListCommand
+    tags:
+      - name: vagranted.cli.command
+      - name: vagranted.container_aware
+  vagranted.cli.command.installer.inspect:
+    class: AmaTeam\Vagranted\Console\Command\Installer\InspectCommand
+    tags:
+      - name: vagranted.cli.command
+      - name: vagranted.container_aware
+  vagranted.cli.command.installer.test:
+    class: AmaTeam\Vagranted\Console\Command\Installer\TestCommand
+    tags:
+      - name: vagranted.cli.command
+      - name: vagranted.container_aware
+  vagranted.cli.command.sets.list:
+    class: AmaTeam\Vagranted\Console\Command\Sets\ListCommand
+    tags:
+      - name: vagranted.cli.command
+      - name: vagranted.container_aware
+  vagranted.cli.command.sets.inspect:
+    class: AmaTeam\Vagranted\Console\Command\Sets\InspectCommand
+    tags:
+      - name: vagranted.cli.command
+      - name: vagranted.container_aware
+  vagranted.cli.command.sets.install:
+    class: AmaTeam\Vagranted\Console\Command\Sets\InstallCommand
+    tags:
+      - name: vagranted.cli.command
+      - name: vagranted.container_aware
+  vagranted.cli.command.sets.delete:
+    class: AmaTeam\Vagranted\Console\Command\Sets\DeleteCommand
+    tags:
+      - name: vagranted.cli.command
+      - name: vagranted.container_aware
+  vagranted.cli.command.sets.evict:
+    class: AmaTeam\Vagranted\Console\Command\Sets\EvictCommand
+    tags:
+      - name: vagranted.cli.command
+      - name: vagranted.container_aware
+  # endregion

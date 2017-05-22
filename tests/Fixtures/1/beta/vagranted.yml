@@ -1,0 +1,8 @@
+context:
+  current_set: beta
+  beta: 2
+templates:
+  - pattern: '*.twig'
+    name: '{{ basename }}.rendered'
+assets:
+  - '*.asset'

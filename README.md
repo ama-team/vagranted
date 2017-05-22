@@ -5,19 +5,13 @@ it will be thriving one day.
 
 # Vagranted
 
-Vagranted is a tool to help in sharing similar vagrant file structure 
-across projects. Even if you have the option and infrastructure to 
-create and share boxes (we don't), most likely  you'll hit the 
-necessity of specifying similar customizations to different project 
-Vagrantfiles. If you're running a web studio, you'll be fatigued 
-pretty soon simply by managing those Vagrantfiles.
-
-Vagranted takes another approach on Vagrant inheritance: target 
-Vagrantfile is rendered from a *source base* - a Vagrantfile 
-template, optional context and optional file set. Source base may 
-inherit from another one, which makes possible to define a common
-source base and reuse it in child projects with only altering context
-variables.
+Vagranted is a simple PHP tool to build file sets from using *resource
+sets* - packages consisting of assets and templates. Vagranted primary
+target is avoiding duplication in Vagrant files - if you have lots of 
+similar projects with small differences, managing and upgrading their
+Vagrant definitions is a PITA - but you can use it every time you have
+a common set of files and/or templates and need to render final file 
+set in several similar projects.
 
 If you're interested, please proceed to [usage](#usage) section.
 
@@ -29,73 +23,101 @@ composer require --dev ama-team/vagranted
 
 ## Usage
 
-Vagranted uses *source base* to render final Vagrantfile. *Source base*
-consists of:
-
-- Vagrantfile.twig
-- (Optionally) other files, conventionally stored in resources/vagrant
-- (Optionally) vagranted.yml configuration file
-
-Whenever Vagranted is run, it simply renders Vagrantfile.twig to 
-Vagrantfile using context which will be discussed later. Twig template 
-engine, which is used in this project, allows *template inheritance*
-that allows source base to extend another source base, and that allows
-source base to use another source bases as starting points. To do so,
-you need to explicitly define inheritance in `vagranted.yml`:
+Vagranted is dumb simple and operates on thing called a *resource set*.
+Resource set is just a collection of files, each of which may be just a
+file, an asset (meaning it will be copied to target directory during 
+the build phase) or template (meaning it will be rendered to target 
+directory during the build phase). Each resource set may define other 
+resource sets as parents - which may not only be used to deliver 
+assets/templates, but also be used in Twig inheritance system. Finally,
+each resource set declares context - an arbitrary structure that will
+be used during template rendering. When build phase is triggered, all 
+contexts are squashed into one, overwriting collisions, so latter 
+contexts may override previous ones. Resource set configuration - 
+file locators and context - can be specified in `vagranted.yml` in 
+root of resource set:
 
 ```yml
-extends:
-  ama-base-box: ssh+git://git@github.com/ama-team/vagranted-base-box
-  root-box: https+tgz://domain/box.tgz 
-```
-
-Source base names are necessary and can't overlap even in different
-source bases - Twig loaders are context-free and have to resolve 
-template names exactly the same without any regard which template is 
-processed right now. To use Vagrantfile.twig from another source base,
-you need to extend from it:
-
-```twig
-{% extends 'ama-base-box://Vagrantfile.twig' %}
-```
-
-Now you can override particular blocks stored in extended file:
-
-```twig
-{% block chef_run_list %}
-    {{ parent() }}
-    "mysql",
-{% endblock %}
-```
-
-Contexts and file sets are deeply merged: contexts overwrite matching 
-keys as deep as possible, files overwrite each other.
-
-### vagranted.yml structure
-
-`vagranted.yml` has very simple structure:
-
-```yaml
-extends:
-  %name%: %uri%
-  ssh+git: ssh+git://git@github.com:user/repo.git#0.1.0
-  https+git: https+git://github.com/user/repo.git#0.1.0
-  https+tgz: https+tgz://github.com/user/repo/archive/0.1.0.tgz
-  http+zip: http+zip://github.com/user/repo/archive/0.1.0.zip
+assets:
+  - resources/vagranted/**/* # yeah, that's glob pattern
+  - pattern: **/*.rb
+    exclusions: 
+      - helpers/**/*
+templates:
+  - Vagrantfile.twig # will be rendered as dirname + basename
+  - pattern: **/*.twig
+    exclusions:
+      - app/Resources/**/*
+      - Vagrantfile.twig
+    name: 'rendered/{{ directory }}/{{ basename }}'
+dependencies:
+  base-box: 'git+ssh://github.com/ama-team/vagranted-base-box.git#0.1.0'
+  php-box: 'git+ssh://github.com/ama-team/vagranted-php-box.git#0.2.3'
 context:
-  image: ubuntu/xenial64
-  feature_flags:
-    docker: true
+  php: 
+    version: '7.1'
+    extensions:
+      - mbstring
+      - dom
+  docker:
+    images:
+      mysql: 'mysql:5.6'
 ```
+
+Using Vagrantfile inheritance as example, typical resource set chain 
+may look like this:
+
+```
+git+ssh://github.com/ama-team/vagranted-base-box.git#0.1.0
+  Vagrantfile.twig
+  
+git+ssh://github.com/ama-team/vagranted-php-box.git#0.2.3
+  resources/vagrant/chef/cookbooks/vagrant-php/metadata.rb
+  resources/vagrant/chef/cookbooks/vagrant-php/recipes/default.rb
+  vagranted.yml
+  Vagrantfile.twig
+  
+http+tgz:///private-quarters.amateurs.io/vagranted/boxes/codeigniter.tgz
+  resources/vagrant/chef/cookbooks/vagrant-php/recipes/codeigniter.rb
+  vagranted.yml
+  
+(project dir)
+  vagranted.yml
+```
+
+The first resource set declares only basic template file - it is 
+implied that it will be used only for extending.  
+The second resource set inherits from first one, and it's own 
+Vagrantfile.twig extends Vagrantfile.twig from the first set and 
+declares it as a template. Also, second resource set defines two assets
+that will be included in final build.  
+The third resource set adds extra asset that also will be included in
+build, and changes Chef run list using context.  
+Finally, the project itself alters context again using vagranted.yml in
+the directory where build will take place.
 
 ### Invocation
 
-Currently there is only one command used to render Vagrantfile:
+During regular usage, you will need only single compile command
 
 ```bash
-vendor/bin/vagranted [--workspace|-w path] [--directory|-d path] [target]
+vendor/bin/vagranted compile
 ```
 
-It will find Vagrantfile.twig in current directory or one of it's 
-parents and will render it to `target` argument (`Vagrantfile` next to
-`Vagrantfile.twig` by default)
+You can also inspect the resulting combination of resource sets using 
+corresponding command:
+
+```bash
+vendor/bin/vagranted compile:inspect
+```
+
+There are more commands bundled in, but chances are you won't need 
+them, and you can always list them using binary without arguments:
+
+```
+vendor/bin/vagranted
+```
+
+Every command accepts `--project-directory`, `--data-directory` and
+`--working-directory` options, though i don't remember if last is used
+anywhere.
