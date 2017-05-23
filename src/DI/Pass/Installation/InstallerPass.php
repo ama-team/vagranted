@@ -2,24 +2,27 @@
 
 namespace AmaTeam\Vagranted\DI\Pass\Installation;
 
+use AmaTeam\Vagranted\DI\Pass\AbstractMethodInjectionPass;
 use AmaTeam\Vagranted\DI\References;
 use AmaTeam\Vagranted\DI\Tags;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @author Etki <etki@etki.me>
  */
-class InstallerPass implements CompilerPassInterface
+class InstallerPass extends AbstractMethodInjectionPass
 {
-    public function process(ContainerBuilder $container)
+    function getServiceId()
     {
-        $id = References::INSTALLER_COLLECTION;
-        $definition = $container->getDefinition($id);
-        $installers = $container->findTaggedServiceIds(Tags::INSTALLER);
-        foreach (array_keys($installers) as $id) {
-            $definition->addMethodCall('add', [new Reference($id),]);
-        }
+        return References::INSTALLER_COLLECTION;
+    }
+
+    function getInjectedTag()
+    {
+        return Tags::INSTALLER;
+    }
+
+    function getInjectionMethod()
+    {
+        return 'add';
     }
 }

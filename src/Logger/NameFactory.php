@@ -11,6 +11,10 @@ class NameFactory
      * @var string[]
      */
     private $namespaces = [];
+    /**
+     * @var string
+     */
+    private $prefix;
 
     /**
      * @param string[] $namespaces

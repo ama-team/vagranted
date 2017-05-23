@@ -27,7 +27,7 @@ class Distributor implements EventDispatcherAwareInterface, LoggerAwareInterface
     /**
      * @param ReconfigurableInterface[] $services
      */
-    public function __construct(array $services)
+    public function __construct(array $services = [])
     {
         $this->services = $services;
     }
@@ -43,5 +43,10 @@ class Distributor implements EventDispatcherAwareInterface, LoggerAwareInterface
             );
         }
         $this->logger->info('Applied new configuration to services');
+    }
+
+    public function add(ReconfigurableInterface $service)
+    {
+        $this->services[] = $service;
     }
 }

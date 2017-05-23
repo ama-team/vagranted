@@ -46,7 +46,7 @@ class Loader implements LoggerAwareInterface
     public function load($uri)
     {
         $schema = $this->extractSchema($uri);
-        if (!$schema || in_array($schema, Constants::LOCAL_SCHEMAS)) {
+        if (empty($schema) || in_array($schema, Constants::LOCAL_SCHEMAS)) {
             return $this->reader->read($this->stripSchema($uri));
         }
         $manager = $this->manager;

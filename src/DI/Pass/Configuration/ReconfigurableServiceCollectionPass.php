@@ -2,11 +2,9 @@
 
 namespace AmaTeam\Vagranted\DI\Pass\Configuration;
 
+use AmaTeam\Vagranted\DI\Pass\AbstractMethodInjectionPass;
 use AmaTeam\Vagranted\DI\References;
 use AmaTeam\Vagranted\DI\Tags;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Collects all reconfigurable services and pushes them into corresponding
@@ -14,16 +12,20 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @author Etki <etki@etki.me>
  */
-class ReconfigurableServiceCollectionPass implements CompilerPassInterface
+class ReconfigurableServiceCollectionPass extends AbstractMethodInjectionPass
 {
-    public function process(ContainerBuilder $container)
+    function getServiceId()
     {
-        $definition
-            = $container->getDefinition(References::CONFIGURATION_DISTRIBUTOR);
-        $consumers = $container->findTaggedServiceIds(Tags::RECONFIGURABLE);
-        $references = array_map(function ($id) {
-            return new Reference($id);
-        }, array_keys($consumers));
-        $definition->setArguments([$references]);
+        return References::CONFIGURATION_DISTRIBUTOR;
+    }
+
+    function getInjectedTag()
+    {
+        return Tags::RECONFIGURABLE;
+    }
+
+    function getInjectionMethod()
+    {
+        return 'add';
     }
 }

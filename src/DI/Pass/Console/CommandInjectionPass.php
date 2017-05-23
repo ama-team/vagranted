@@ -2,24 +2,27 @@
 
 namespace AmaTeam\Vagranted\DI\Pass\Console;
 
+use AmaTeam\Vagranted\DI\Pass\AbstractMethodInjectionPass;
 use AmaTeam\Vagranted\DI\References;
 use AmaTeam\Vagranted\DI\Tags;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @author Etki <etki@etki.me>
  */
-class CommandInjectionPass implements CompilerPassInterface
+class CommandInjectionPass extends AbstractMethodInjectionPass
 {
-    public function process(ContainerBuilder $container)
+    function getServiceId()
     {
-        $application
-            = $container->getDefinition(References::CONSOLE_APPLICATION);
-        $commands = $container->findTaggedServiceIds(Tags::CONSOLE_COMMAND);
-        foreach (array_keys($commands) as $id) {
-            $application->addMethodCall('add', [new Reference($id)]);
-        }
+        return References::CONSOLE_APPLICATION;
+    }
+
+    function getInjectedTag()
+    {
+        return Tags::CONSOLE_COMMAND;
+    }
+
+    function getInjectionMethod()
+    {
+        return 'add';
     }
 }

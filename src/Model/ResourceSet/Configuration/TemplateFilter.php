@@ -13,9 +13,9 @@ class TemplateFilter implements
     RenamingFilePatternInterface
 {
     /**
-     * List of glob patterns that are used to find templates.
+     * Glob patterns that is used to find templates.
      *
-     * @var string[]
+     * @var string
      */
     private $pattern;
 

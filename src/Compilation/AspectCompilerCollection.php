@@ -26,7 +26,7 @@ class AspectCompilerCollection implements
     /**
      * @param AspectCompilerInterface[] $compilers
      */
-    public function __construct(array $compilers) {
+    public function __construct(array $compilers = []) {
         $this->compilers = $compilers;
     }
 
@@ -45,5 +45,10 @@ class AspectCompilerCollection implements
                 new AspectCompiled($context, $set)
             );
         }
+    }
+
+    public function add(AspectCompilerInterface $compiler)
+    {
+        $this->compilers[] = $compiler;
     }
 }
