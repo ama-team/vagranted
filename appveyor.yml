@@ -2,7 +2,7 @@ build: false
 skip_tags: true
 clone_depth: 1
 install:
-  - cinst php
+  - cinst php --version 7.0.9
   - php -r "readfile('http://getcomposer.org/installer');" | php
   - php composer.phar install --no-interaction --no-progress -vvv
 
