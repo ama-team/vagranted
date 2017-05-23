@@ -67,7 +67,7 @@ class Reader
         return (new ResourceSet())
             ->setName($path)
             ->setWorkspace(new Workspace($path))
-            ->setConfiguration($this->readConfiguration($path))
+            ->setConfiguration($configuration)
             ->setAssets($this->locateAssets($path, $configuration))
             ->setTemplates($this->locateTemplates($path, $configuration));
     }

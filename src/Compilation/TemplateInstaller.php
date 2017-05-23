@@ -8,6 +8,7 @@ use AmaTeam\Vagranted\Model\Compilation\Context;
 use AmaTeam\Vagranted\Model\Filesystem\WorkspaceInterface;
 use AmaTeam\Vagranted\Model\ResourceSet\ResourceSetInterface;
 use AmaTeam\Vagranted\Twig\Factory;
+use Exception;
 use Psr\Log\LoggerAwareInterface;
 
 /**
@@ -45,20 +46,37 @@ class TemplateInstaller implements AspectCompilerInterface, LoggerAwareInterface
      * @param ResourceSetInterface $set
      * @param WorkspaceInterface $workspace
      * @param Context $context
+     * @throws Exception
      */
     public function compile(
         ResourceSetInterface $set,
         WorkspaceInterface $workspace,
         Context $context
     ) {
+        $twig = $this->twigFactory->create($context);
         foreach ($set->getTemplates() as $template => $targets) {
             foreach ($targets as $target) {
+                $loggerContext = [
+                    'template' => $template,
+                    'target' => $target,
+                    'set' => $set->getName()
+                ];
+                $format = 'Rendering template `{template}` from set `{set}` ' .
+                    'to `{target}`';
+                $this->getLogger()->debug($format, $loggerContext);
                 $source = $set->getWorkspace()->getPath($template);
                 $target = $workspace->getPath($target);
-                $twig = $this->twigFactory->create($context);
                 $template = $twig->load($source);
-                $content = $template->render($context->getContext());
-                $this->filesystem->set($target, $content);
+                try {
+                    $content = $template->render($context->getContext());
+                    $this->filesystem->set($target, $content);
+                } catch (Exception $e) {
+                    // todo: wrap in a proper self-describing exception
+                    $format = 'Exception during template {template} '.
+                        'rendering (set: {set})';
+                    $this->getLogger()->error($format, $loggerContext);
+                    throw $e;
+                }
             }
         }
     }

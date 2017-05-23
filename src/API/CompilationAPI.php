@@ -52,4 +52,9 @@ class CompilationAPI
         $target = new Workspace($path);
         $this->controller->compile($project, $target);
     }
+
+    public function createContext()
+    {
+        return $this->controller->createContext($this->loader->load());
+    }
 }

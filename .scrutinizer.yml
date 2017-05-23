@@ -1,0 +1,14 @@
+checks:
+  php:
+    code_rating: true
+    duplication: true
+build:
+  environment:
+    php:
+      version: '5.6'
+  tests:
+    override:
+      - command: composer test:coverage
+        coverage:
+          file: tests/Report/coverage.xml
+          format: php-clover

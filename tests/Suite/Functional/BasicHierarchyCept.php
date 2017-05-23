@@ -1,6 +1,8 @@
 <?php
 
+use AmaTeam\Vagranted\Builder;
 use AmaTeam\Vagranted\Filesystem\Helper;
+use AmaTeam\Vagranted\Model\Configuration;
 
 $root = Helper::getInstallationRoot();
 $fixture = "$root/tests/Fixtures/1";
@@ -24,7 +26,15 @@ $expectation = [
     ]
 ];
 
-$I = new AcceptanceTester($scenario);
+$configuration = (new Configuration())
+    ->setProjectDirectory($project)
+    ->setTargetDirectory($target)
+    ->setWorkingDirectory($project);
+
+$api = (new Builder())->withConfiguration($configuration)->build();
+$api->getCompilationAPI()->compile();
+
+$I = new FunctionalTester($scenario);
 $I->runShellCommand($command);
 foreach ($expectation as $path => $content) {
     $content = is_array($content) ? $content : [$content];

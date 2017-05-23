@@ -106,18 +106,27 @@ class ContextualLoader implements Twig_LoaderInterface
 
     private function computePathVariants($name)
     {
-        if (Helper::isAbsolutePath($name)) {
-            return [$name];
-        }
-        $name = $this->normalize($name);
-        $delimiter = strpos($name, ':');
-        $setId = substr($name, 0, $delimiter);
-        $templatePath = substr($name, $delimiter);
+        $variants = [];
+        $delimiterPosition = strpos($name, ':');
         $sets = $this->context->getResourceSets();
-        if (!isset($sets[$setId])) {
-            return [];
+        if ($delimiterPosition) {
+            $setId = substr($name, 0, $delimiterPosition);
+            $templatePath = substr($name, $delimiterPosition + 1);
+            if (isset($sets[$setId])) {
+                $path = $sets[$setId]->getWorkspace()->getPath($templatePath);
+                $variants[] = $path;
+            }
         }
-        $set = $sets[$setId];
-        return [$set->getWorkspace()->getPath($templatePath)];
+        $path = $name;
+        if (!Helper::isAbsolutePath($name)) {
+            $path = $this
+                ->context
+                ->getProject()
+                ->getSet()
+                ->getWorkspace()
+                ->getPath($name);
+        }
+        $variants[] = $path;
+        return $variants;
     }
 }

@@ -3,7 +3,7 @@
   "description": "Vagrantfile manager",
   "minimum-stability": "stable",
   "license": "MIT",
-  "version": "0.1.0",
+  "version": "0.1.0-rc",
   "authors": [
     {
       "name": "Etki",
@@ -19,23 +19,27 @@
     "php": ">= 5.6",
     "ext-json": "*",
     "twig/twig": ">=1.0 <3.0",
-    "symfony/console": "^3.2",
-    "symfony/yaml": "^3.2",
-    "symfony/process": "^3.2",
+    "symfony/console": ">=2.0 <4.0",
+    "symfony/yaml": ">=2.0 <4.0",
+    "symfony/process": ">=2.0 <4.0",
     "monolog/monolog": "^1.22",
-    "symfony/dependency-injection": "^3.2",
-    "symfony/config": "^3.2",
-    "symfony/serializer": "^3.2",
-    "guzzlehttp/guzzle": "^6.2",
-    "symfony/property-access": "^3.2",
-    "symfony/event-dispatcher": "^3.2",
-    "symfony/stopwatch": "^3.2",
-    "knplabs/gaufrette": "^0.3.1",
+    "symfony/dependency-injection": ">=2.0 <4.0",
+    "symfony/config": ">=2.0 <4.0",
+    "symfony/serializer": ">=2.0 <4.0",
+    "symfony/property-access": ">=2.0 <4.0",
+    "symfony/event-dispatcher": ">=2.0 <4.0",
     "kzykhys/git": "^0.1.2"
   },
   "require-dev": {
     "codeception/codeception": "^2.2",
-    "php-vfs/php-vfs": "^1.3"
+    "php-vfs/php-vfs": "^1.3",
+    "satooshi/php-coveralls": "^1.0"
+  },
+  "bin": ["bin/vagranted"],
+  "scripts": {
+    "test": "codecept build && codecept run --coverage --coverage-xml --coverage-html --xml",
+    "test:report:publish": "composer test:report:publish:coverage",
+    "test:report:publish:coverage": "coveralls"
   },
   "config": {
     "bin-dir": "bin"

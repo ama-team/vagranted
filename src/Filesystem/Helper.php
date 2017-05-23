@@ -75,7 +75,7 @@ class Helper
             return getenv('HOME') . '/.cache/ama-team/vagranted';
         }
         if (getenv('LocalAppData')) {
-            return getenv('LocalAppData') . '\\AMA-Team\\Vagranted';
+            return getenv('LocalAppData') . '\\AMA Team\\Vagranted';
         }
         return sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'vagranted';
     }

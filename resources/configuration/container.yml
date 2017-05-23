@@ -96,7 +96,7 @@ services:
   # region vagranted.logger
   vagranted.logger.formatter:
     class: Monolog\Formatter\LineFormatter
-    arguments: [%vagranted.logger.format%]
+    arguments: ['%vagranted.logger.format%']
   vagranted.logger.processor.psr:
     class: Monolog\Processor\PsrLogMessageProcessor
     tags:
@@ -115,8 +115,8 @@ services:
   vagranted.logger.name_factory:
     class: AmaTeam\Vagranted\Logger\NameFactory
     arguments:
-      - %vagranted.namespaces%
-      - %vagranted.logger.prefix%
+      - '%vagranted.namespaces%'
+      - '%vagranted.logger.prefix%'
   # endregion
 
   # region vagranted.support
@@ -146,6 +146,11 @@ services:
       - '@vagranted.resource_set.reader'
     tags:
       - name: vagranted.logger.consumer
+  vagranted.resource_set.configuration.reader:
+    class: AmaTeam\Vagranted\ResourceSet\Configuration\Reader
+    arguments:
+      - '@vagranted.io.filesystem'
+      - '@vagranted.io.serializer'
   # endregion
 
   # region vagranted.installation
@@ -207,19 +212,6 @@ services:
       - name: vagranted.installation.aspect_loader
   vagranted.installation.aspect.manager_collection:
     class: AmaTeam\Vagranted\ResourceSet\Installed\AspectLoaderCollection
-  # endregion
-
-  # region vagranted.resource_set
-  vagranted.resource_set.configuration.reader:
-    class: AmaTeam\Vagranted\ResourceSet\Configuration\Reader
-    arguments:
-      - '@vagranted.io.filesystem'
-      - '@vagranted.io.serializer'
-  vagranted.resource_set.reader:
-    class: AmaTeam\Vagranted\ResourceSet\Reader
-    arguments:
-      - '@vagranted.resource_set.configuration.reader'
-      - '@vagranted.io.filesystem.pattern_locator'
   # endregion
 
   # region vagranted.compilation
@@ -313,6 +305,11 @@ services:
       - name: vagranted.event.producer
   vagranted.cli.command.compile:
     class: AmaTeam\Vagranted\Console\Command\CompileCommand
+    tags:
+      - name: vagranted.cli.command
+      - name: vagranted.container_aware
+  vagranted.cli.command.compile.inspect:
+    class: AmaTeam\Vagranted\Console\Command\Compile\InspectCommand
     tags:
       - name: vagranted.cli.command
       - name: vagranted.container_aware

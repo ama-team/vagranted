@@ -37,12 +37,24 @@ class Normalizer
         if (!$configuration->getWorkingDirectory()) {
             $configuration->setWorkingDirectory(getcwd());
         }
+        if (!Helper::isAbsolutePath($configuration->getWorkingDirectory())) {
+            $workingDirectory = getcwd() .
+                DIRECTORY_SEPARATOR .
+                $configuration->getWorkingDirectory();
+            $configuration->setWorkingDirectory($workingDirectory);
+        }
         if (!$configuration->getProjectDirectory()) {
             $workingDirectory = $configuration->getWorkingDirectory();
             $projectDirectory = $this
                 ->projectRootLocator
                 ->locate($workingDirectory);
             $projectDirectory = $projectDirectory ?: $workingDirectory;
+            $configuration->setProjectDirectory($projectDirectory);
+        }
+        if (!Helper::isAbsolutePath($configuration->getProjectDirectory())) {
+            $projectDirectory = $configuration->getWorkingDirectory() .
+                DIRECTORY_SEPARATOR .
+                $configuration->getProjectDirectory();
             $configuration->setProjectDirectory($projectDirectory);
         }
         if (!$configuration->getDataDirectory()) {

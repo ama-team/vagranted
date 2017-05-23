@@ -4,5 +4,7 @@ context:
 templates:
   - pattern: '*.twig'
     name: '{{ basename }}.rendered'
+    exclusions:
+      - current-set.twig
 assets:
   - '*.asset'

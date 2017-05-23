@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Compilation;
 
+use AmaTeam\Vagranted\Model\Compilation\Context;
 use AmaTeam\Vagranted\Model\Filesystem\WorkspaceInterface;
 use AmaTeam\Vagranted\Model\Project;
 
@@ -42,5 +43,14 @@ class Controller
     {
         $context = $this->contextBuilder->assemble($project);
         $this->compiler->compile($context, $target);
+    }
+
+    /**
+     * @param Project $project
+     * @return Context
+     */
+    public function createContext(Project $project)
+    {
+        return $this->contextBuilder->assemble($project);
     }
 }
