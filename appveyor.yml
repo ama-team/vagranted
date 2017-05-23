@@ -14,9 +14,11 @@ install:
   - echo date.timezone="UTC" >> php.ini
   - echo extension_dir=ext >> php.ini
   - echo extension=php_openssl.dll >> php.ini
+  - echo extension=php_mbstring.dll >> php.ini
   - cd C:\projects\vagranted
   - php -r "readfile('http://getcomposer.org/installer');" | php
   - php composer.phar install --no-interaction --no-progress -vvv
 
 test_script:
+  - php -m
   - composer test
