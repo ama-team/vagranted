@@ -10,6 +10,12 @@
       "email": "etki@etki.me"
     }
   ],
+  "repositories": {
+    "packagist": {
+      "url": "https://packagist.org",
+      "type": "composer"
+    }
+  },
   "autoload": {
     "psr-4": {
       "AmaTeam\\Vagranted\\": "src/"
@@ -18,7 +24,7 @@
   "require": {
     "php": ">= 5.6",
     "ext-json": "*",
-    "twig/twig": "1.33.2",
+    "twig/twig": ">= 1.0 <3.0",
     "symfony/console": ">=2.0 <4.0",
     "symfony/yaml": ">=2.0 <4.0",
     "symfony/process": ">=2.0 <4.0",

@@ -5,6 +5,9 @@ machine:
     - sudo apt-get update -yq
     - sudo apt-get install allure-commandline -yq
     - 'echo "date.timezone = UTC" >> /opt/circleci/php/$(phpenv global)/etc/php.ini'
+dependencies:
+  override:
+    - composer install --no-interaction --no-progress -vvv:
 test:
   override:
     - 'composer run test'
