@@ -4,6 +4,7 @@ clone_depth: 1
 clone_folder: C:\projects\vagranted
 install:
   - cinst -y OpenSSL.Light
+  - cinst -y curl
   - SET PATH=C:\Program Files\OpenSSL;%PATH%
   - sc config wuauserv start= auto
   - net start wuauserv
@@ -15,6 +16,7 @@ install:
   - echo extension_dir=ext >> php.ini
   - echo extension=php_openssl.dll >> php.ini
   - echo extension=php_mbstring.dll >> php.ini
+  - echo extension=php_curl.dll >> php.ini
   - cd C:\projects\vagranted
   - php -r "readfile('http://getcomposer.org/installer');" | php
   - php composer.phar install --no-interaction --no-progress -vvv
