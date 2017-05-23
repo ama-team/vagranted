@@ -7,7 +7,7 @@ install:
   - SET PATH=C:\Program Files\OpenSSL;%PATH%
   - sc config wuauserv start= auto
   - net start wuauserv
-  - cinst -y php
+  - cinst -y php --version 7.0.9
   - cd c:\tools\php
   - copy php.ini-production php.ini
   - echo date.timezone="UTC" >> php.ini
