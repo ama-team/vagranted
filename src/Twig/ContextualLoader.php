@@ -51,6 +51,11 @@ class ContextualLoader implements Twig_LoaderInterface
         throw new Twig_Error_Loader('Failed to load template ' . $name);
     }
 
+    public function getSource($name)
+    {
+        return $this->getSourceContext($name)->getCode();
+    }
+
     /**
      * Gets the cache key to use for the cache for a given template name.
      *
