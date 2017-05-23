@@ -69,7 +69,7 @@ class Manager implements LoggerAwareInterface
     {
         foreach ($this->idFactory->getVariations($reference) as $candidate) {
             $installation = $this->controller->get($candidate);
-            if ($installation) {
+            if ($installation !== null) {
                 return $installation;
             }
         }

@@ -95,10 +95,10 @@ class StorageController implements
      */
     public function get($id)
     {
-        if (!$this->storage->exists($id)) {
+        $workspace = $this->storage->get($id);
+        if ($workspace === null) {
             return null;
         }
-        $workspace = $this->storage->get($id);
         $installation = (new Installation())
             ->setId($id)
             ->setWorkspace($workspace);

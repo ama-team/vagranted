@@ -44,7 +44,7 @@ interface AccessorInterface
     /**
      * @param string $path
      * @param bool $recursive
-     * @return SplFileInfo[]|Iterator
+     * @return Iterator Contains SplFileInfo instances
      */
     public function enumerate($path, $recursive = false);
 

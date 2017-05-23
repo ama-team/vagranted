@@ -11,17 +11,17 @@ use AmaTeam\Vagranted\DI\Tags;
  */
 class LoaderPass extends AbstractMethodInjectionPass
 {
-    function getServiceId()
+    protected function getServiceId()
     {
         return References::INSTALLATION_LOADER;
     }
 
-    function getInjectedTag()
+    protected function getInjectedTag()
     {
         return Tags::ASPECT_LOADER;
     }
 
-    function getInjectionMethod()
+    protected function getInjectionMethod()
     {
         return 'addAspectLoader';
     }

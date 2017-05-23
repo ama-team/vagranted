@@ -11,17 +11,17 @@ use AmaTeam\Vagranted\DI\Tags;
  */
 class InstallerPass extends AbstractMethodInjectionPass
 {
-    function getServiceId()
+    protected function getServiceId()
     {
         return References::INSTALLER_COLLECTION;
     }
 
-    function getInjectedTag()
+    protected function getInjectedTag()
     {
         return Tags::INSTALLER;
     }
 
-    function getInjectionMethod()
+    protected function getInjectionMethod()
     {
         return 'add';
     }

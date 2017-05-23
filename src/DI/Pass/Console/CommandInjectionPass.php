@@ -11,17 +11,17 @@ use AmaTeam\Vagranted\DI\Tags;
  */
 class CommandInjectionPass extends AbstractMethodInjectionPass
 {
-    function getServiceId()
+    protected function getServiceId()
     {
         return References::CONSOLE_APPLICATION;
     }
 
-    function getInjectedTag()
+    protected function getInjectedTag()
     {
         return Tags::CONSOLE_COMMAND;
     }
 
-    function getInjectionMethod()
+    protected function getInjectionMethod()
     {
         return 'add';
     }

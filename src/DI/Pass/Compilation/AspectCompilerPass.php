@@ -11,17 +11,17 @@ use AmaTeam\Vagranted\DI\Tags;
  */
 class AspectCompilerPass extends AbstractMethodInjectionPass
 {
-    function getServiceId()
+    protected function getServiceId()
     {
         return References::ASPECT_COMPILER_COLLECTION;
     }
 
-    function getInjectedTag()
+    protected function getInjectedTag()
     {
         return Tags::ASPECT_COMPILER;
     }
 
-    function getInjectionMethod()
+    protected function getInjectionMethod()
     {
         return 'add';
     }

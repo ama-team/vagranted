@@ -16,17 +16,17 @@ abstract class AbstractMethodInjectionPass implements CompilerPassInterface
     /**
      * @return string
      */
-    abstract function getServiceId();
+    abstract protected function getServiceId();
 
     /**
      * @return string
      */
-    abstract function getInjectedTag();
+    abstract protected function getInjectedTag();
 
     /**
      * @return string
      */
-    abstract function getInjectionMethod();
+    abstract protected function getInjectionMethod();
 
     public function process(ContainerBuilder $container)
     {

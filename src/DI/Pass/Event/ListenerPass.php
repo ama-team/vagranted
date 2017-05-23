@@ -11,17 +11,17 @@ use AmaTeam\Vagranted\DI\Tags;
  */
 class ListenerPass extends AbstractMethodInjectionPass
 {
-    function getServiceId()
+    protected function getServiceId()
     {
         return References::EVENT_DISPATCHER;
     }
 
-    function getInjectedTag()
+    protected function getInjectedTag()
     {
         return Tags::EVENT_SUBSCRIBER;
     }
 
-    function getInjectionMethod()
+    protected function getInjectionMethod()
     {
         return 'addSubscriber';
     }

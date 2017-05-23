@@ -14,17 +14,17 @@ use AmaTeam\Vagranted\DI\Tags;
  */
 class ReconfigurableServiceCollectionPass extends AbstractMethodInjectionPass
 {
-    function getServiceId()
+    protected function getServiceId()
     {
         return References::CONFIGURATION_DISTRIBUTOR;
     }
 
-    function getInjectedTag()
+    protected function getInjectedTag()
     {
         return Tags::RECONFIGURABLE;
     }
 
-    function getInjectionMethod()
+    protected function getInjectionMethod()
     {
         return 'add';
     }
