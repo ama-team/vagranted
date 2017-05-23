@@ -32,7 +32,7 @@ class TestCommand extends AbstractInstallerCommand
         $uri = $input->getArgument('uri');
         $collection = $this->getInstallerCollection();
         $installers = $collection->find($uri);
-        if (!$installers) {
+        if (empty($installers)) {
             $pattern = '<error>No installers found for uri %s</error>';
             $output->writeln(sprintf($pattern, $uri));
             return 1;
@@ -42,7 +42,7 @@ class TestCommand extends AbstractInstallerCommand
         $output->writeln(sprintf($pattern, $installer->getId()));
         /** @var InstallerInterface[] $extras */
         $extras = array_slice($installers, 1);
-        if (!$extras) {
+        if (empty($extras)) {
             return 0;
         }
         $output->writeln('Extra installers that also match the uri:');

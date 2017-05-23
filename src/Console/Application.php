@@ -15,7 +15,6 @@ use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -29,7 +28,7 @@ class Application extends ApplicationBase implements
     const NAME = 'Vagranted';
 
     /**
-     * @var Container
+     * @var ContainerInterface
      */
     private $container;
     /**

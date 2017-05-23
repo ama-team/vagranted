@@ -7,7 +7,6 @@ use AmaTeam\Vagranted\Logger\Factory;
 use AmaTeam\Vagranted\API;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Serializer\Serializer;
@@ -18,7 +17,7 @@ use Symfony\Component\Serializer\Serializer;
 class AbstractCommand extends Command implements ContainerAwareInterface
 {
     /**
-     * @var Container
+     * @var ContainerInterface
      */
     private $container;
 

@@ -42,7 +42,7 @@ class ContextBuilder implements LoggerAwareInterface
         $root = $project->getSet();
         $queue = $root->getConfiguration()->getDependencies();
         $sets = [Defaults::ROOT_PROJECT_NAME => $root,];
-        while ($queue) {
+        while (!empty($queue)) {
             $id = key($queue);
             $uri = current($queue);
             if (isset($sets[$id])) {
