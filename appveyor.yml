@@ -7,7 +7,7 @@ clone_folder: c:\projects\vagranted
 skip_tags: true
 
 environment:
-  PHP_DOWNLOAD_FILE: 'php-7.1.2-nts-Win32-VC14-x86.zip'
+  PHP_DOWNLOAD_FILE: 'php-7.1.2-nts-Win32-VC14-x64.zip'
   PROJECT_DIRECTORY: c:\projects\vagranted
 
 init:
