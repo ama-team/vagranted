@@ -87,7 +87,8 @@ class Helper
      */
     public static function relativize($path, $root)
     {
-
+        $path = self::normalize($path);
+        $root = self::normalize($root);
         $directory = dirname($path);
         if ($directory === $root) {
             return basename($path);
@@ -101,5 +102,22 @@ class Helper
     public static function isAbsolutePath($path)
     {
         return self::getSymfonyFilesystem()->isAbsolutePath($path);
+    }
+
+    public static function normalize($path)
+    {
+        $path = str_replace('\\', '/', $path);
+        $parts = explode('/', $path);
+        $stack = [];
+        foreach ($parts as $part) {
+            if ($part === '.') {
+                continue;
+            } else if ($part === '..' && !empty($stack)) {
+                array_pop($stack);
+                continue;
+            }
+            $stack[] = $part;
+        }
+        return implode(DIRECTORY_SEPARATOR, $stack);
     }
 }

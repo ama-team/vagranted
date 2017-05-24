@@ -8,9 +8,6 @@ $root = Helper::getInstallationRoot();
 $fixture = "$root/tests/Fixtures/1";
 $project = "$fixture/_root";
 $target = "$fixture/target";
-$executable = "$root/bin/vagranted";
-
-$command = "'$executable' compile --project '$project' --target '$target'";
 
 $expectation = [
     '_root.rendered' => '_root: 0',
@@ -35,7 +32,6 @@ $api = (new Builder())->withConfiguration($configuration)->build();
 $api->getCompilationAPI()->compile();
 
 $I = new FunctionalTester($scenario);
-$I->runShellCommand($command);
 foreach ($expectation as $path => $content) {
     $content = is_array($content) ? $content : [$content];
     $I->seeFileFound("$target/$path");

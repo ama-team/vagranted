@@ -35,7 +35,6 @@ class PatternLocator
         $this->twig = $twig;
     }
 
-
     /**
      * Locates all matching files and returns array of matches in format of
      * [source relative path => target relative path].
