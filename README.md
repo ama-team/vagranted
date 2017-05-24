@@ -168,4 +168,4 @@ anything to `master` until it is battle-tested.
 
 ### Testing
 
-Simply run `composer test` or `composer test:coverage`
+Simply run `composer test`
