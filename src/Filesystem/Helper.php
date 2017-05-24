@@ -108,15 +108,24 @@ class Helper
     {
         $path = str_replace('\\', '/', $path);
         $parts = explode('/', $path);
+        if (sizeof($parts) <= 1) {
+            return implode('', $parts);
+        }
         $stack = [];
         foreach ($parts as $part) {
-            if ($part === '.') {
+            if ($part === '.' || $part === '') {
                 continue;
             } else if ($part === '..' && !empty($stack)) {
                 array_pop($stack);
                 continue;
             }
             $stack[] = $part;
+        }
+        if ($parts[0] === '') {
+            array_unshift($stack, '');
+        }
+        if ($parts[sizeof($parts) - 1] === '') {
+            $stack[] = '';
         }
         return implode(DIRECTORY_SEPARATOR, $stack);
     }

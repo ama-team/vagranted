@@ -84,7 +84,7 @@ class PatternLocatorTest extends Unit
             [
                 $this->path('/'),
                 $this->paths(['/alpha', '/beta/gamma', '/delta/omega/epsilon']),
-                $this->createPattern('*/**'),
+                $this->createPattern($this->path('*/**')),
                 $this->normalize([
                     'beta/gamma' => 'beta/gamma',
                     'delta/omega/epsilon' => 'delta/omega/epsilon',
