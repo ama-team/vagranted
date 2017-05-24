@@ -48,7 +48,7 @@ class PatternLocator
         $results = [];
         foreach ($this->filesystem->enumerate($path, true) as $absolutePath) {
             $location = Helper::relativize($absolutePath, $path);
-            if (!fnmatch($pattern->getPattern(), $location)) {
+            if (!fnmatch($pattern->getPattern(), $location, FNM_NOESCAPE)) {
                 continue;
             }
             if ($this->isExcluded($location, $pattern)) {
