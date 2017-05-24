@@ -148,8 +148,8 @@ them, and you can always list them using binary without arguments:
 vendor/bin/vagranted
 ```
 
-Every command accepts `--project`, `--data-dir`, `--working-dir`
-and `--target` options, though i don't remember if last one is used 
+Every command accepts `--project`, `--data-dir`, `--target` and 
+`--working-dir` options, though i don't remember if last one is used 
 anywhere.
 
 ### Restrictions
