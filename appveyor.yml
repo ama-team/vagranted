@@ -17,6 +17,7 @@ install:
   - echo extension=php_openssl.dll >> php.ini
   - echo extension=php_mbstring.dll >> php.ini
   - echo extension=php_curl.dll >> php.ini
+  - echo extension=php_xdebug.dll >> php.ini
   - cd C:\projects\vagranted
   - php -r "readfile('http://getcomposer.org/installer');" | php
   - php composer.phar install --no-interaction --no-progress -vvv
