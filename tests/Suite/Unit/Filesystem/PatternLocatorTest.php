@@ -68,9 +68,19 @@ class PatternLocatorTest extends Unit
     private function normalize(array $results)
     {
         $paths = [];
-        foreach ($results as $key => $value)
-        {
+        foreach ($results as $key => $value) {
             $paths[$this->path($key)] = $this->path($value);
+        }
+        return $paths;
+    }
+
+    private function normalizeMany(array $results)
+    {
+        $paths = [];
+        foreach ($results as $key => $values) {
+            $paths[$this->path($key)] = array_map(function ($value) {
+                return $this->path($value);
+            }, $values);
         }
         return $paths;
     }
@@ -257,7 +267,7 @@ class PatternLocatorTest extends Unit
             'resources/chef/data_bags/users.yml' => ['resources/chef/data_bags/users.yml'],
             'resources/docker/Dockerfile' => ['docker/resources/docker/Dockerfile']
         ];
-        $results = $this->normalize($this->locator->locateMany('/', $patterns));
+        $results = $this->normalizeMany($this->locator->locateMany('/', $patterns));
         $this->assertEquals($expectations, $results);
     }
 }

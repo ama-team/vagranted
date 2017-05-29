@@ -139,7 +139,7 @@ class AccessorTest extends Unit
         $results = [];
         /** @var SplFileInfo $result */
         foreach ($this->accessor->enumerate($path, false) as $result) {
-            $results[] = $result->getPathname();
+            $results[] = $this->normalize($result->getPathname());
         }
         sort($leaves);
         sort($results);
@@ -164,7 +164,7 @@ class AccessorTest extends Unit
         $results = [];
         /** @var SplFileInfo $result */
         foreach ($this->accessor->enumerate($path, true) as $result) {
-            $results[] = $result->getPathname();
+            $results[] = $this->normalize($result->getPathname());
         }
         sort($expected);
         sort($results);
@@ -186,11 +186,20 @@ class AccessorTest extends Unit
         $results = [];
         /** @var SplFileInfo $info */
         foreach ($iterator as $info) {
-            $results[] = $info->getPathname();
+            $results[] = $this->normalize($info->getPathname());
         }
         $expectation = [$directoryA, $directoryB,];
         sort($results);
         sort($expectation);
         $this->assertEquals($expectation, $results);
+    }
+
+    private function normalize($path)
+    {
+        return str_replace('\\', '/', $path);
+    }
+
+    private function normalizeMany(array $paths) {
+        return array_map([$this, 'normalize',], $paths);
     }
 }
