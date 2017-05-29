@@ -57,7 +57,7 @@ class Accessor implements AccessorInterface
     {
         $finder = (new Finder())->in($path);
         if (!$recursive) {
-            $finder = $finder->depth('< 1');
+            $finder = $finder->depth(0);
         }
         return $finder->getIterator();
     }

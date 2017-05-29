@@ -170,4 +170,27 @@ class AccessorTest extends Unit
         sort($results);
         $this->assertEquals($expected, $results);
     }
+
+    /**
+     * @test
+     */
+    public function shouldIncludeDirectoriesInEnumeration()
+    {
+        $path = $this->vfs->path('/node');
+        $directoryA = $this->vfs->path('/node/node-a');
+        $directoryB = $this->vfs->path('/node/node-b');
+        $directoryC = $this->vfs->path('/node/node-b/node-c');
+        $this->accessor->createDirectory($directoryA);
+        $this->accessor->createDirectory($directoryC);
+        $iterator = $this->accessor->enumerate($path);
+        $results = [];
+        /** @var SplFileInfo $info */
+        foreach ($iterator as $info) {
+            $results[] = $info->getPathname();
+        }
+        $expectation = [$directoryA, $directoryB,];
+        sort($results);
+        sort($expectation);
+        $this->assertEquals($expectation, $results);
+    }
 }

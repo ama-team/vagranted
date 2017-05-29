@@ -165,7 +165,9 @@ services:
 
   # region vagranted.installation
   vagranted.installation.loader:
-    class: \AmaTeam\Vagranted\Installation\Loader
+    class: AmaTeam\Vagranted\Installation\Loader
+    tags:
+      - name: vagranted.logger.consumer
   vagranted.installation.manager:
     class: AmaTeam\Vagranted\Installation\Manager
     arguments:

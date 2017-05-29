@@ -26,6 +26,7 @@ class ListCommand extends AbstractResourceSetCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $installations = $this->getApi()->getResourceSetAPI()->enumerate();
+        $installations->rewind();
         if (!$installations->valid()) {
             $output->writeln('<error>Whoops, no sets installed</error>');
             return 0;

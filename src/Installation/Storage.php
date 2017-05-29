@@ -104,8 +104,8 @@ class Storage implements LoggerAwareInterface, EventDispatcherAwareInterface
         $this->logger->debug('Enumerating existing workspaces');
         $directory = $this->structure->getInstallationDirectory();
         $iterator = $this->filesystem->enumerate($directory);
-        $mapper = function (SplFileInfo $entry = null) {
-            return $entry ? new Workspace($entry->getPathname()) : null;
+        $mapper = function (SplFileInfo $entry) {
+            return new Workspace($entry->getPathname());
         };
         return new MappingIterator($iterator, $mapper);
     }

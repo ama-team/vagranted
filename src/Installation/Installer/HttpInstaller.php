@@ -81,8 +81,13 @@ class HttpInstaller implements DescribedInstallerInterface, LoggerAwareInterface
         $guzzle = $this->guzzle->create();
         $zippy = $this->zippy->create();
         $guzzle->get($uri, [RequestOptions::SINK => $temporaryFile,]);
+        $this->logger->debug(
+            'Downloaded archive from uri {uri}, extracting',
+            ['uri' => $uri,]
+        );
         $archive = $zippy->open($temporaryFile, $type);
         $archive->extract($path);
+        $this->logger->debug('Extracted archive');
         $this->filesystem->delete($temporaryFile);
     }
 
