@@ -5,7 +5,7 @@ use AmaTeam\Vagranted\Filesystem\Helper;
 use AmaTeam\Vagranted\Model\Configuration;
 
 $root = Helper::getInstallationRoot();
-$fixture = "$root/tests/Fixtures/1";
+$fixture = "$root/tests/Fixtures/Acceptance/1";
 $project = "$fixture/_root";
 $target = "$fixture/target";
 
