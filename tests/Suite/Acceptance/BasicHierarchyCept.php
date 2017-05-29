@@ -31,7 +31,7 @@ $configuration = (new Configuration())
 $api = (new Builder())->withConfiguration($configuration)->build();
 $api->getCompilationAPI()->compile();
 
-$I = new FunctionalTester($scenario);
+$I = new AcceptanceTester($scenario);
 foreach ($expectation as $path => $content) {
     $content = is_array($content) ? $content : [$content];
     $I->seeFileFound("$target/$path");

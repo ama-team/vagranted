@@ -34,7 +34,10 @@
     "symfony/serializer": ">=2.0 <4.0",
     "symfony/property-access": ">=2.0 <4.0",
     "symfony/event-dispatcher": ">=2.0 <4.0",
-    "kzykhys/git": "^0.1.2"
+    "kzykhys/git": "^0.1.2",
+    "alchemy/zippy": "^0.4.8",
+    "guzzlehttp/guzzle": "^6.2",
+    "ramsey/uuid": "^3.6"
   },
   "require-dev": {
     "codeception/codeception": "^2.2",

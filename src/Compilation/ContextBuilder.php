@@ -3,12 +3,12 @@
 namespace AmaTeam\Vagranted\Compilation;
 
 use AmaTeam\Vagranted\Application\Configuration\Defaults;
-use AmaTeam\Vagranted\Logger\LoggerAwareTrait;
 use AmaTeam\Vagranted\Model\Compilation\Context;
 use AmaTeam\Vagranted\Model\Project;
 use AmaTeam\Vagranted\Model\ResourceSet\ResourceSetInterface;
 use AmaTeam\Vagranted\ResourceSet\Loader;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
 /**
  * Loads composition
@@ -51,7 +51,7 @@ class ContextBuilder implements LoggerAwareInterface
             }
             unset($queue[$id]);
             $this->logger->debug(
-                'Retrieving dependency {id} ({uri})',
+                'Retrieving dependency `{id}` ({uri})',
                 ['id' => $id, 'uri' => $uri,]
             );
             $set = $this->loader->load($uri);

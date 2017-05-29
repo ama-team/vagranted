@@ -2,7 +2,7 @@
 
 namespace AmaTeam\Vagranted\Compilation;
 
-use AmaTeam\Vagranted\Logger\LoggerAwareTrait;
+use Psr\Log\LoggerAwareTrait;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 use AmaTeam\Vagranted\Model\Compilation\Context;
 use AmaTeam\Vagranted\Model\Filesystem\WorkspaceInterface;
@@ -22,6 +22,7 @@ class TemplateInstaller implements AspectCompilerInterface, LoggerAwareInterface
      * @var Factory
      */
     private $twigFactory;
+
     /**
      * @var AccessorInterface
      */
@@ -43,6 +44,8 @@ class TemplateInstaller implements AspectCompilerInterface, LoggerAwareInterface
      * Renders all resource set templates and installs them in provided
      * location.
      *
+     * todo: refactor this mess
+     *
      * @param ResourceSetInterface $set
      * @param WorkspaceInterface $workspace
      * @param Context $context
@@ -63,7 +66,7 @@ class TemplateInstaller implements AspectCompilerInterface, LoggerAwareInterface
                 ];
                 $format = 'Rendering template `{template}` from set `{set}` ' .
                     'to `{target}`';
-                $this->getLogger()->debug($format, $loggerContext);
+                $this->logger->debug($format, $loggerContext);
                 $source = $set->getWorkspace()->getPath($template);
                 $target = $workspace->getPath($target);
                 $template = $twig->load($source);
@@ -74,7 +77,7 @@ class TemplateInstaller implements AspectCompilerInterface, LoggerAwareInterface
                     // todo: wrap in a proper self-describing exception
                     $format = 'Exception during template {template} '.
                         'rendering (set: {set})';
-                    $this->getLogger()->error($format, $loggerContext);
+                    $this->logger->error($format, $loggerContext);
                     throw $e;
                 }
             }

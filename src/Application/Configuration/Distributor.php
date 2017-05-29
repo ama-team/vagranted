@@ -4,10 +4,10 @@ namespace AmaTeam\Vagranted\Application\Configuration;
 
 use AmaTeam\Vagranted\Event\EventDispatcherAwareInterface;
 use AmaTeam\Vagranted\Event\EventDispatcherAwareTrait;
-use AmaTeam\Vagranted\Logger\LoggerAwareTrait;
 use AmaTeam\Vagranted\Model\Configuration;
 use AmaTeam\Vagranted\Model\ReconfigurableInterface;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
 /**
  * Allows on-the-fly application reconfiguration.
@@ -42,7 +42,7 @@ class Distributor implements EventDispatcherAwareInterface, LoggerAwareInterface
                 ['service' => get_class($service),]
             );
         }
-        $this->logger->info('Applied new configuration to services');
+        $this->logger->info('Applied new configuration');
     }
 
     public function add(ReconfigurableInterface $service)

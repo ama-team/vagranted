@@ -122,6 +122,16 @@ services:
   # region vagranted.support
   vagranted.support.git.factory:
     class: AmaTeam\Vagranted\Support\Git\Factory
+    arguments:
+      - '@vagranted.configuration.container'
+  vagranted.support.zippy.factory:
+    class: AmaTeam\Vagranted\Support\Zippy\Factory
+    arguments:
+      - '@vagranted.configuration.container'
+  vagranted.support.guzzle.factory:
+    class: AmaTeam\Vagranted\Support\Guzzle\Factory
+    arguments:
+      - '@vagranted.configuration.container'
   # endregion
 
   # region vagranted.project
@@ -167,6 +177,7 @@ services:
       - '@vagranted.installation.storage'
       - '@vagranted.installation.installer_collection'
       - '@vagranted.installation.loader'
+      - '@vagranted.io.filesystem'
     tags:
       - name: vagranted.logger.consumer
       - name: vagranted.event.producer
@@ -175,6 +186,8 @@ services:
     arguments:
       - '@vagranted.structure'
       - '@vagranted.io.filesystem'
+    tags:
+      - name: vagranted.logger.consumer
   vagranted.installation.id_factory:
     class: AmaTeam\Vagranted\Installation\IdFactory
   vagranted.installation.installer_collection:
@@ -184,6 +197,15 @@ services:
     arguments:
       - '@vagranted.configuration.container'
       - '@vagranted.support.git.factory'
+    tags:
+      - name: vagranted.resource_set.installer
+      - name: vagranted.logger.consumer
+  vagranted.installation.installer.http:
+    class: AmaTeam\Vagranted\Installation\Installer\HttpInstaller
+    arguments:
+      - '@vagranted.support.guzzle.factory'
+      - '@vagranted.support.zippy.factory'
+      - '@vagranted.io.filesystem'
     tags:
       - name: vagranted.resource_set.installer
       - name: vagranted.logger.consumer

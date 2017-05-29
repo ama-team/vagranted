@@ -1,0 +1,8 @@
+dependencies:
+  box: 'git+https://github.com/ama-team/vagranted-php-box.git#0.1.0'
+assets:
+  - asset
+templates:
+  - '*.twig'
+context:
+  variable: 42

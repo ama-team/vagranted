@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Support\Git;
 
+use AmaTeam\Vagranted\Application\Configuration\Container;
 use PHPGit\Git;
 
 /**
@@ -9,6 +10,19 @@ use PHPGit\Git;
  */
 class Factory
 {
+    /**
+     * @var Container
+     */
+    private $configuration;
+
+    /**
+     * @param Container $configuration
+     */
+    public function __construct(Container $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
     /**
      * @param string $repository
      * @param string $binary
@@ -18,6 +32,12 @@ class Factory
     {
         return (new Git())
             ->setRepository($repository)
-            ->setBin($binary ?: 'git');
+            ->setBin($binary ?: $this->computeBinary());
+    }
+
+    private function computeBinary()
+    {
+        $extras = $this->configuration->get()->getExtras();
+        return isset($extras['git.binary']) ? $extras['git.binary'] : 'git';
     }
 }

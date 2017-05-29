@@ -2,7 +2,7 @@
 
 namespace AmaTeam\Vagranted\Installation;
 
-use AmaTeam\Vagranted\Logger\LoggerAwareTrait;
+use Psr\Log\LoggerAwareTrait;
 use AmaTeam\Vagranted\Model\Installation\Installation;
 use Iterator;
 use Psr\Log\LoggerAwareInterface;

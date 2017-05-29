@@ -1,8 +1,9 @@
 # Vagranted
 
 [![Packagist](https://img.shields.io/packagist/v/ama-team/vagranted.svg?style=flat-square)](https://packagist.org/packages/ama-team/vagranted)
-[![CircleCI/Master](https://img.shields.io/circleci/project/github/ama-team/vagranted/master.svg?style=flat-square)](https://circleci.com/gh/ama-team/vagranted/tree/dev)
-[![Scrutinizer](https://img.shields.io/scrutinizer/g/ama-team/vagranted.svg?style=flat-square)](https://scrutinizer-ci.com/g/ama-team/vagranted)
+[![CircleCI/Master](https://img.shields.io/circleci/project/github/ama-team/vagranted/master.svg?style=flat-square)](https://circleci.com/gh/ama-team/vagranted/tree/master)
+[![AppVeyor/Master](https://img.shields.io/appveyor/ci/etki/vagranted/master.svg?style=flat-square)](https://ci.appveyor.com/project/etki/vagranted)
+[![Scrutinizer](https://img.shields.io/scrutinizer/g/ama-team/vagranted/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/ama-team/vagranted)
 [![Code Climate](https://img.shields.io/codeclimate/github/ama-team/vagranted.svg?style=flat-square)](https://codeclimate.com/github/ama-team/vagranted)
 [![Coveralls/Master](https://img.shields.io/coveralls/ama-team/vagranted/master.svg?style=flat-square)](https://coveralls.io/github/ama-team/vagranted?branch=master)
 
@@ -169,3 +170,13 @@ anything to `master` until it is battle-tested.
 ### Testing
 
 Simply run `composer test`
+
+### Developer shield cellar
+
+Following shields are pointing to dev branch in corresponding services
+
+[![Packagist/Prerelease](https://img.shields.io/packagist/vpre/ama-team/vagranted.svg?style=flat-square)](https://packagist.org/packages/ama-team/vagranted)
+[![CircleCI/Dev](https://img.shields.io/circleci/project/github/ama-team/vagranted/dev.svg?style=flat-square)](https://circleci.com/gh/ama-team/vagranted/tree/dev)
+[![AppVeyor/Dev](https://img.shields.io/appveyor/ci/etki/vagranted/dev.svg?style=flat-square)](https://ci.appveyor.com/project/etki/vagranted)
+[![Scrutinizer/Dev](https://img.shields.io/scrutinizer/g/ama-team/vagranted/dev.svg?style=flat-square)](https://scrutinizer-ci.com/g/ama-team/vagranted)
+[![Coveralls/Dev](https://img.shields.io/coveralls/ama-team/vagranted/dev.svg?style=flat-square)](https://coveralls.io/github/ama-team/vagranted?branch=dev)

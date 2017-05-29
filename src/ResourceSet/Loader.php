@@ -4,9 +4,9 @@ namespace AmaTeam\Vagranted\ResourceSet;
 
 use AmaTeam\Vagranted\Application\Configuration\Constants;
 use AmaTeam\Vagranted\Installation\Manager;
-use AmaTeam\Vagranted\Logger\LoggerAwareTrait;
 use AmaTeam\Vagranted\Model\ResourceSet\ResourceSetInterface;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 
 /**
  * @author Etki <etki@etki.me>

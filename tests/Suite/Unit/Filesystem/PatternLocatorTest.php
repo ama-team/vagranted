@@ -9,12 +9,11 @@ use AmaTeam\Vagranted\Model\Filesystem\FilePatternInterface;
 use AmaTeam\Vagranted\Model\Filesystem\RenamingFilePatternInterface;
 use Codeception\Test\Unit;
 use PHPUnit_Framework_MockObject_MockObject as Mock;
+use SplFileInfo;
 use Twig_Environment;
 use Twig_Loader_Array;
 
 /**
- *
- *
  * @author Etki <etki@etki.me>
  */
 class PatternLocatorTest extends Unit
@@ -53,9 +52,17 @@ class PatternLocatorTest extends Unit
         return $path;
     }
 
-    private function paths(array $paths)
+    private function results(array $paths)
     {
-        return array_map([$this, 'path'], $paths);
+        return array_map(function ($path) {
+            $pathname = $this->path($path);
+            $mock = $this->createMock(SplFileInfo::class);
+            $mock
+                ->expects($this->any())
+                ->method('getPathname')
+                ->willReturn($pathname);
+            return $mock;
+        }, $paths);
     }
 
     private function normalize(array $results)
@@ -68,12 +75,37 @@ class PatternLocatorTest extends Unit
         return $paths;
     }
 
+    private function createPattern(
+        $pattern,
+        array $exclusions = null,
+        $name = null
+    ) {
+        $interfaces = [];
+        if ($exclusions !== null) {
+            $interfaces[] = ExclusiveFilePatternInterface::class;
+        }
+        if ($name) {
+            $interfaces[] = RenamingFilePatternInterface::class;
+        }
+        $interfaces = $interfaces ?: [FilePatternInterface::class];
+        $interfaces = sizeof($interfaces) === 1 ? current($interfaces) : $interfaces;
+        $mock = $this->createMock($interfaces);
+        $mock->method('getPattern')->willReturn($pattern);
+        if ($exclusions !== null) {
+            $mock->method('getExclusions')->willReturn($exclusions);
+        }
+        if ($name) {
+            $mock->method('getName')->willReturn($name);
+        }
+        return $mock;
+    }
+
     public function simplePatternProvider()
     {
         return [
             [
                 $this->path('/'),
-                $this->paths(['/alpha', '/beta', '/gamma']),
+                $this->results(['/alpha', '/beta', '/gamma']),
                 $this->createPattern('*'),
                 $this->normalize([
                     'alpha' => 'alpha',
@@ -83,7 +115,7 @@ class PatternLocatorTest extends Unit
             ],
             [
                 $this->path('/'),
-                $this->paths(['/alpha', '/beta/gamma', '/delta/omega/epsilon']),
+                $this->results(['/alpha', '/beta/gamma', '/delta/omega/epsilon']),
                 $this->createPattern($this->path('*/**')),
                 $this->normalize([
                     'beta/gamma' => 'beta/gamma',
@@ -92,7 +124,7 @@ class PatternLocatorTest extends Unit
             ],
             [
                 $this->path('/'),
-                $this->paths(['/alpha/beta/gamma', '/alumni/paspartu', '/omega']),
+                $this->results(['/alpha/beta/gamma', '/alumni/paspartu', '/omega']),
                 $this->createPattern('al*'),
                 $this->normalize([
                     'alpha/beta/gamma' =>'alpha/beta/gamma',
@@ -107,7 +139,7 @@ class PatternLocatorTest extends Unit
         return [
             [
                 $this->path('/'),
-                $this->paths(['/alpha', '/alumni', '/albuquerque']),
+                $this->results(['/alpha', '/alumni', '/albuquerque']),
                 $this->createPattern('al*', ['*que*', '*ni']),
                 [
                     'alpha' => 'alpha',
@@ -115,7 +147,7 @@ class PatternLocatorTest extends Unit
             ],
             [
                 $this->path('/'),
-                $this->paths(['/alpha', '/alumni', '/albuquerque']),
+                $this->results(['/alpha', '/alumni', '/albuquerque']),
                 $this->createPattern('al*', ['al*']),
                 [],
             ],
@@ -127,7 +159,7 @@ class PatternLocatorTest extends Unit
         return [
             [
                 $this->path('/'),
-                $this->paths(['/alpha.YML', '/beta.yaml', '/gamma.yml']),
+                $this->results(['/alpha.YML', '/beta.yaml', '/gamma.yml']),
                 $this->createPattern('*', null, '{{basename}}.{{extension|lower}}.dist'),
                 [
                     'alpha.YML' => 'alpha.yml.dist',
@@ -201,28 +233,31 @@ class PatternLocatorTest extends Unit
         $this->assertEquals($expected, $results);
     }
 
-    private function createPattern(
-        $pattern,
-        array $exclusions = null,
-        $name = null
-    ) {
-        $interfaces = [];
-        if ($exclusions !== null) {
-            $interfaces[] = ExclusiveFilePatternInterface::class;
-        }
-        if ($name) {
-            $interfaces[] = RenamingFilePatternInterface::class;
-        }
-        $interfaces = $interfaces ?: [FilePatternInterface::class];
-        $interfaces = sizeof($interfaces) === 1 ? current($interfaces) : $interfaces;
-        $mock = $this->createMock($interfaces);
-        $mock->method('getPattern')->willReturn($pattern);
-        if ($exclusions !== null) {
-            $mock->method('getExclusions')->willReturn($exclusions);
-        }
-        if ($name) {
-            $mock->method('getName')->willReturn($name);
-        }
-        return $mock;
+    /**
+     * @test
+     */
+    public function shouldReturnExpectedResultsOnLocateMany()
+    {
+        $patterns = [
+            $this->createPattern('**/*.yml', ['vagranted.yml']),
+            $this->createPattern('resources/docker/**', null, 'docker/{{ directory }}/{{ filename }}')
+        ];
+        $paths = [
+            '/vagranted.yml',
+            '/resources/docker/Dockerfile',
+            '/resources/docker/etc/app.yml',
+            '/resources/chef/data_bags/users.yml'
+        ];
+        $this->filesystem->method('enumerate')->willReturn($this->results($paths));
+        $expectations = [
+            'resources/docker/etc/app.yml' => [
+                'resources/docker/etc/app.yml',
+                'docker/resources/docker/etc/app.yml',
+            ],
+            'resources/chef/data_bags/users.yml' => ['resources/chef/data_bags/users.yml'],
+            'resources/docker/Dockerfile' => ['docker/resources/docker/Dockerfile']
+        ];
+        $results = $this->normalize($this->locator->locateMany('/', $patterns));
+        $this->assertEquals($expectations, $results);
     }
 }

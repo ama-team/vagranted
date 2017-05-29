@@ -6,6 +6,7 @@ use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 use AmaTeam\Vagranted\Model\Filesystem\ExclusiveFilePatternInterface;
 use AmaTeam\Vagranted\Model\Filesystem\FilePatternInterface;
 use AmaTeam\Vagranted\Model\Filesystem\RenamingFilePatternInterface;
+use SplFileInfo;
 use Twig_Environment;
 
 /**
@@ -46,7 +47,12 @@ class PatternLocator
     public function locate($path, FilePatternInterface $pattern)
     {
         $results = [];
-        foreach ($this->filesystem->enumerate($path, true) as $absolutePath) {
+        /** @var SplFileInfo $info */
+        foreach ($this->filesystem->enumerate($path, true) as $info) {
+            if ($info->isDir()) {
+                continue;
+            }
+            $absolutePath = $info->getPathname();
             $location = Helper::relativize($absolutePath, $path);
             if (!fnmatch($pattern->getPattern(), $location, FNM_NOESCAPE)) {
                 continue;

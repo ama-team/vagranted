@@ -6,7 +6,8 @@ use AmaTeam\Vagranted\Event\EventDispatcherAwareInterface;
 use AmaTeam\Vagranted\Event\EventDispatcherAwareTrait;
 use AmaTeam\Vagranted\Filesystem\Structure;
 use AmaTeam\Vagranted\Language\MappingIterator;
-use AmaTeam\Vagranted\Logger\LoggerAwareTrait;
+use Iterator;
+use Psr\Log\LoggerAwareTrait;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 use AmaTeam\Vagranted\Model\Filesystem\Workspace;
 use Psr\Log\LoggerAwareInterface;
@@ -42,37 +43,71 @@ class Storage implements LoggerAwareInterface, EventDispatcherAwareInterface
 
     public function get($name)
     {
+        $path = $this->composePath($name);
+        $context = ['name' => $name, 'path' => $path,];
+        $this->logger->debug(
+            'Retrieving workspace `{name}` (path: `{path}`)',
+            $context
+        );
         if (!$this->exists($name)) {
+            $this->logger->debug(
+                'Workspace `{name}` doesn\'t exist, returning null',
+                $context
+            );
             return null;
         }
-        return new Workspace($this->composePath($name));
+        return new Workspace($path);
     }
 
     public function create($name)
     {
         $path = $this->composePath($name);
+        $context = ['name' => $name, 'path' => $path,];
+        $this->logger->debug(
+            'Creating workspace `{name}` (path: `{path}`)',
+            $context
+        );
         $this->filesystem->delete($path);
-        $this->filesystem->createDirectory($path);
+        if (!$this->filesystem->createDirectory($path)) {
+            $this->logger->error(
+                'Failed to create workspace `{name}` (path: `{path}`)',
+                $context
+            );
+        }
         return new Workspace($path);
     }
 
     public function purge($name)
     {
         $path = $this->composePath($name);
+        $context = ['name' => $name, 'path' => $path,];
+        $this->logger->debug(
+            'Purging workspace `{name}` (path: `{path}`)',
+            $context
+        );
         if (!$this->filesystem->exists($path)) {
+            $this->logger->debug(
+                'Workspace `{name}` (path: `{path}`) hasn\'t been created',
+                $context
+            );
             return false;
         }
         $this->filesystem->delete($path);
         return true;
     }
 
+    /**
+     * @return Iterator<WorkspaceInterface>
+     */
     public function enumerate()
     {
+        $this->logger->debug('Enumerating existing workspaces');
         $directory = $this->structure->getInstallationDirectory();
         $iterator = $this->filesystem->enumerate($directory);
-        return new MappingIterator($iterator, function (SplFileInfo $entry) {
-            return new Workspace($entry->getPathname());
-        });
+        $mapper = function (SplFileInfo $entry = null) {
+            return $entry ? new Workspace($entry->getPathname()) : null;
+        };
+        return new MappingIterator($iterator, $mapper);
     }
 
     public function exists($name)

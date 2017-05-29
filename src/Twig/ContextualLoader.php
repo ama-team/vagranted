@@ -9,11 +9,14 @@ use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 use Twig_Error_Loader;
 use Twig_LoaderInterface;
 use Twig_Source;
+use Twig_SourceContextLoaderInterface;
 
 /**
  * @author Etki <etki@etki.me>
  */
-class ContextualLoader implements Twig_LoaderInterface
+class ContextualLoader implements
+    Twig_LoaderInterface,
+    Twig_SourceContextLoaderInterface
 {
     /**
      * @var AccessorInterface

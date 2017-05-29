@@ -10,7 +10,8 @@ use AmaTeam\Vagranted\Event\Event\Installation\Loaded;
 use AmaTeam\Vagranted\Event\EventDispatcherAwareInterface;
 use AmaTeam\Vagranted\Event\EventDispatcherAwareTrait;
 use AmaTeam\Vagranted\Language\MappingIterator;
-use AmaTeam\Vagranted\Logger\LoggerAwareTrait;
+use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
+use Psr\Log\LoggerAwareTrait;
 use AmaTeam\Vagranted\Model\Filesystem\WorkspaceInterface;
 use AmaTeam\Vagranted\Model\Installation\Installation;
 use AmaTeam\Vagranted\Model\Installation\NormalizingInstallerInterface;
@@ -44,18 +45,28 @@ class StorageController implements
     private $loader;
 
     /**
+     * @var AccessorInterface
+     */
+    private $filesystem;
+
+    /**
+     * todo: this class should not depend on filesystem
+     *
      * @param Storage $storage
      * @param InstallerCollection $installers
      * @param Loader $loader
+     * @param AccessorInterface $filesystem
      */
     public function __construct(
         Storage $storage,
         InstallerCollection $installers,
-        Loader $loader
+        Loader $loader,
+        AccessorInterface $filesystem
     ) {
         $this->storage = $storage;
         $this->installers = $installers;
         $this->loader = $loader;
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -69,6 +80,7 @@ class StorageController implements
         $workspace = $this->storage->create($id);
         $target = $workspace
             ->getPath(Constants::INSTALLATION_ARTIFACT_DIRECTORY);
+        $this->filesystem->createDirectory($target);
         $specification = $installer->install($uri, $target);
         $specification = $specification ?: new Specification();
         $specification->setUri($uri);
@@ -78,7 +90,7 @@ class StorageController implements
             ->setSpecification($specification);
         $this->loader->bootstrap($installation);
         $installation->getStatistics()->installed();
-        $this->getLogger()->notice(
+        $this->logger->notice(
             'Installed resource set from uri {uri}',
             ['uri' => $uri,]
         );
@@ -134,7 +146,7 @@ class StorageController implements
      */
     public function delete($id)
     {
-        $this->getLogger()->debug('Deleting installation {id}', ['id' => $id,]);
+        $this->logger->debug('Deleting installation {id}', ['id' => $id,]);
         $installation = $this->get($id);
         if (!$installation) {
             return null;

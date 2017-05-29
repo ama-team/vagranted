@@ -7,13 +7,22 @@ namespace AmaTeam\Vagranted\Language;
  */
 class Strings
 {
-    public static function indent($input, $amount = 2, $sequence = ' ')
+    /**
+     * Indents every line in $input for $depth repeats of $sequence
+     *
+     * @param string $input
+     * @param int $depth
+     * @param string $sequence
+     * @return string
+     */
+    public static function indent($input, $depth = 2, $sequence = ' ')
     {
-        $prefix = str_repeat($sequence, $amount);
+        $prefix = str_repeat($sequence, $depth);
         $lines = explode("\n", $input);
-        $upgraded = array_map(function ($line) use ($prefix) {
-            return $prefix . $line;
-        }, $lines);
+        $upgraded = [];
+        foreach ($lines as $line) {
+            $upgraded[] = $prefix . $line;
+        }
         return implode("\n", $upgraded);
     }
 }

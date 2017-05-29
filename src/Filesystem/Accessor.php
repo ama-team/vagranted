@@ -3,11 +3,9 @@
 namespace AmaTeam\Vagranted\Filesystem;
 
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
-use FilesystemIterator;
-use RecursiveIteratorIterator;
 use SplFileInfo;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Iterator\RecursiveDirectoryIterator;
+use Symfony\Component\Finder\Finder;
 
 /**
  * @author Etki <etki@etki.me>
@@ -57,13 +55,11 @@ class Accessor implements AccessorInterface
 
     public function enumerate($path, $recursive = false)
     {
-        $flags = FilesystemIterator::CURRENT_AS_FILEINFO;
+        $finder = (new Finder())->in($path);
         if (!$recursive) {
-            return new FilesystemIterator($path, $flags);
+            $finder = $finder->depth('< 1');
         }
-        return new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($path, $flags)
-        );
+        return $finder->getIterator();
     }
 
     public function exists($path)
@@ -83,11 +79,16 @@ class Accessor implements AccessorInterface
     public function copy($source, $target)
     {
         $parent = dirname($target);
-        if ($this->exists($target)) {
+        if ($this->exists($target) && !is_dir($target)) {
             $this->delete($target);
         } else if (!$this->exists($parent)) {
             $this->createDirectory($parent);
         }
-        copy($source, $target);
+        if (is_dir($source)) {
+            $this->createDirectory($target);
+            $this->helper->mirror($source, $target);
+        } else {
+            copy($source, $target);
+        }
     }
 }

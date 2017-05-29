@@ -1,0 +1,6 @@
+class_name: E2ETester
+modules:
+    enabled:
+        - \Helper\E2E
+        - Cli
+        - Filesystem
