@@ -13,7 +13,7 @@ $project = "$root/tests/Fixtures/E2E/1/project";
 $target = "$root/tests/Fixtures/E2E/1/target";
 
 $I = new E2ETester($scenario);
-$I->runShellCommand("php '$executable' compile --project '$project' --target '$target' --log-level debug");
+$I->runShellCommand("php $executable compile --project $project --target $target --log-level debug");
 $I->amInPath($target);
 $I->seeFileFound('asset');
 $I->seeFileFound('template');
