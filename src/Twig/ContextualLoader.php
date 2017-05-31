@@ -3,7 +3,6 @@
 namespace AmaTeam\Vagranted\Twig;
 
 use AmaTeam\Vagranted\Application\Configuration\Defaults;
-use AmaTeam\Vagranted\Filesystem\Helper;
 use AmaTeam\Vagranted\Model\Compilation\Context;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 use Twig_Error_Loader;
@@ -125,15 +124,12 @@ class ContextualLoader implements
                 $variants[] = $path;
             }
         }
-        $path = $name;
-        if (!Helper::isAbsolutePath($name)) {
-            $path = $this
-                ->context
-                ->getProject()
-                ->getSet()
-                ->getWorkspace()
-                ->resolve($name);
-        }
+        $path = $this
+            ->context
+            ->getProject()
+            ->getSet()
+            ->getWorkspace()
+            ->resolve($name);
         $variants[] = $path;
         return $variants;
     }

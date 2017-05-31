@@ -92,6 +92,8 @@ class HttpInstaller implements DescribedInstallerInterface, LoggerAwareInterface
         $archive = $zippy->open($temporaryFile->toPlatformString(), $type);
         $archive->extract($path);
         $this->logger->debug('Extracted archive');
+        // removing all possibly opened references to file
+        unset($zippy, $archive, $guzzle, $request);
         $this->filesystem->delete($temporaryFile);
     }
 
