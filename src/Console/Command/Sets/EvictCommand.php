@@ -47,7 +47,7 @@ class EvictCommand extends AbstractResourceSetCommand
                 $output->writeln($message);
             }
         );
-        $ttl = new DateInterval($input->getOption('ttl'));
+        $ttl = new DateInterval($input->getArgument('ttl'));
         $evicted = $this
             ->getResourceSetAPI()
             ->evict($ttl);

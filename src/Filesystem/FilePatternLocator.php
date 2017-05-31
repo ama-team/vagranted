@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Filesystem;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 use AmaTeam\Vagranted\Model\Filesystem\ExclusiveFilePatternInterface;
 use AmaTeam\Vagranted\Model\Filesystem\FilePatternInterface;
@@ -12,7 +13,7 @@ use Twig_Environment;
 /**
  * @author Etki <etki@etki.me>
  */
-class PatternLocator
+class FilePatternLocator
 {
     /**
      * @var AccessorInterface
@@ -40,27 +41,26 @@ class PatternLocator
      * Locates all matching files and returns array of matches in format of
      * [source relative path => target relative path].
      *
-     * @param string $path
+     * @param Path $root
      * @param FilePatternInterface $pattern
      * @return string[]
      */
-    public function locate($path, FilePatternInterface $pattern)
+    public function locate(Path $root, FilePatternInterface $pattern)
     {
         $results = [];
         /** @var SplFileInfo $info */
-        foreach ($this->filesystem->enumerate($path, true) as $info) {
+        foreach ($this->filesystem->enumerate($root, true) as $info) {
             if ($info->isDir()) {
                 continue;
             }
-            $absolutePath = $info->getPathname();
-            $location = Helper::relativize($absolutePath, $path);
-            if (!fnmatch($pattern->getPattern(), $location, FNM_NOESCAPE)) {
+            $path = $root->relativize($info->getPathname());
+            if (!fnmatch($pattern->getPattern(), (string) $path, FNM_NOESCAPE)) {
                 continue;
             }
-            if ($this->isExcluded($location, $pattern)) {
+            if ($this->isExcluded($path, $pattern)) {
                 continue;
             }
-            $results[$location] = $this->computeName($location, $pattern);
+            $results[(string) $path] = $this->computeName($path, $pattern);
         }
         return $results;
     }
@@ -69,11 +69,11 @@ class PatternLocator
      * Locates all matching files and returns array of matches in format of
      * [source relative path => [target relative paths]]
      *
-     * @param string $path
+     * @param Path $path
      * @param FilePatternInterface[] $patterns
      * @return string[][]
      */
-    public function locateMany($path, array $patterns)
+    public function locateMany(Path $path, array $patterns)
     {
         $callback = function ($carrier, FilePatternInterface $pattern) use ($path) {
             $results = $this->locate($path, $pattern);
@@ -90,20 +90,20 @@ class PatternLocator
         return array_reduce($patterns, $callback, []);
     }
 
-    private function isExcluded($location, FilePatternInterface $pattern)
+    private function isExcluded(Path $path, FilePatternInterface $pattern)
     {
         if (!($pattern instanceof ExclusiveFilePatternInterface)) {
             return false;
         }
         foreach ($pattern->getExclusions() as $exclusion) {
-            if (fnmatch($exclusion, $location)) {
+            if (fnmatch($exclusion, (string) $path)) {
                 return true;
             }
         }
         return false;
     }
 
-    private function computeName($location, FilePatternInterface $pattern)
+    private function computeName(Path $location, FilePatternInterface $pattern)
     {
         if (!($pattern instanceof RenamingFilePatternInterface)) {
             return $location;
@@ -115,7 +115,7 @@ class PatternLocator
         $context['name'] = $context['basename'];
         $context['basename'] = $context['filename'];
         $context['filename'] = $context['name'];
-        unset($context['dirname']);
+        $context['path'] = Path::parse($location);
         $template = $this->twig->createTemplate($pattern->getName());
         return $template->render($context);
     }

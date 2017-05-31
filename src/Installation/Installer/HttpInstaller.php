@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Installation\Installer;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 use AmaTeam\Vagranted\Model\Installation\DescribedInstallerInterface;
 use AmaTeam\Vagranted\Model\Installation\Description;
@@ -73,19 +74,22 @@ class HttpInstaller implements DescribedInstallerInterface, LoggerAwareInterface
             ['uri' => $uri, 'type' => $type,]
         );
         // todo wrap in filesystem abstraction call
-        $temporaryFile = tempnam(sys_get_temp_dir(), 'vagranted-');
+        $temporaryFile = Path::parse(tempnam(sys_get_temp_dir(), 'vagranted-'));
         $this->logger->debug(
             'Using temporary file `{path}`',
             ['path' => $temporaryFile]
         );
         $guzzle = $this->guzzle->create();
         $zippy = $this->zippy->create();
-        $guzzle->get($uri, [RequestOptions::SINK => $temporaryFile,]);
+        $guzzle->get(
+            $uri,
+            [RequestOptions::SINK => $temporaryFile->toPlatformString(),]
+        );
         $this->logger->debug(
             'Downloaded archive from uri {uri}, extracting',
             ['uri' => $uri,]
         );
-        $archive = $zippy->open($temporaryFile, $type);
+        $archive = $zippy->open($temporaryFile->toPlatformString(), $type);
         $archive->extract($path);
         $this->logger->debug('Extracted archive');
         $this->filesystem->delete($temporaryFile);

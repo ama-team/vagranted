@@ -27,7 +27,7 @@ class InspectCommand extends AbstractInstallerCommand
                 InputArgument::REQUIRED,
                 'Installer to inspect'
             )
-            ->setHelp('Provides basic information about installer');
+            ->setDescription('Provides basic information about installer');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

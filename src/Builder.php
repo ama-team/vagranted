@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\DI\Pass\Compilation\AspectCompilerPass;
 use AmaTeam\Vagranted\DI\Pass\Configuration\ReconfigurableServiceCollectionPass;
 use AmaTeam\Vagranted\DI\Pass\Console\CommandInjectionPass;
@@ -112,8 +113,8 @@ class Builder
     public function withDefaultConfiguration()
     {
         $configuration = (new Configuration())
-            ->setWorkingDirectory(getcwd())
-            ->setProjectDirectory(getcwd())
+            ->setWorkingDirectory(Path::parse(getcwd()))
+            ->setProjectDirectory(Path::parse(getcwd()))
             ->setDataDirectory(Helper::getDefaultDataDirectory());
         return $this->withConfiguration($configuration);
     }
@@ -152,30 +153,25 @@ class Builder
 
     private function loadPrivateDefinitions()
     {
-        $this->loadDefinition(
-            Helper::getInstallationRoot(),
-            // todo hardcode
-            'resources/configuration/container.yml'
-        );
+        $path = Helper::getInstallationRoot()
+            ->resolve('resources/configuration/container.yml');
+        $this->loadDefinition($path);
     }
 
     private function loadExternalDefinitions()
     {
         foreach ($this->serviceDefinitionFiles as $path) {
-            if (!Helper::isAbsolutePath($path)) {
-                $path = $this->configuration->getWorkingDirectory() .
-                    DIRECTORY_SEPARATOR .
-                    $path;
-            }
-            $this->loadDefinition(dirname($path), basename($path));
+            $this->loadDefinition(Path::parse($path));
         }
     }
 
-    private function loadDefinition($root, $path)
+    private function loadDefinition(Path $path)
     {
-        $locator = new FileLocator($root);
+        $path = $this->configuration->getWorkingDirectory()->resolve($path);
+        $root = $path->getParent();
+        $locator = new FileLocator((string) $root);
         $loader = new YamlFileLoader($this->container, $locator);
-        $loader->load($path);
+        $loader->load((string) $root->relativize($path));
     }
 
     private function registerCompilerPasses()

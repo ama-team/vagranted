@@ -54,7 +54,7 @@ class StatisticsLoader implements AspectLoaderInterface
     {
         $path = $installation
             ->getWorkspace()
-            ->getPath(Constants::INSTALLATION_STATISTICS_FILE);
+            ->resolve(Constants::INSTALLATION_STATISTICS_FILE);
         $handler = new Handler($path, $this->serializer, $this->filesystem);
         return $installation->setStatistics($handler);
     }

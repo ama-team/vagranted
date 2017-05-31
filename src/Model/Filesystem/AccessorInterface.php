@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Model\Filesystem;
 
+use AmaTeam\Pathetic\Path;
 use Iterator;
 use SplFileInfo;
 
@@ -17,55 +18,55 @@ use SplFileInfo;
 interface AccessorInterface
 {
     /**
-     * @param string $path
+     * @param Path $path
      * @return SplFileInfo
      */
-    public function inspect($path);
+    public function inspect(Path $path);
 
     /**
-     * @param string $path
+     * @param Path $path
      * @return string|null
      */
-    public function get($path);
+    public function get(Path $path);
 
     /**
-     * @param string $path
+     * @param Path $path
      * @param string $contents
      * @return void
      */
-    public function set($path, $contents);
+    public function set(Path $path, $contents);
 
     /**
-     * @param string $path
+     * @param Path $path
      * @return boolean
      */
-    public function delete($path);
+    public function delete(Path $path);
 
     /**
-     * @param string $path
+     * @param Path $path
      * @param bool $recursive
      * @return Iterator Contains SplFileInfo instances
      */
-    public function enumerate($path, $recursive = false);
+    public function enumerate(Path $path, $recursive = false);
 
     /**
-     * @param string $path
+     * @param Path $path
      * @return boolean
      */
-    public function exists($path);
+    public function exists(Path $path);
 
     /**
-     * @param string $path
+     * @param Path $path
      * @return boolean
      */
-    public function createDirectory($path);
+    public function createDirectory(Path $path);
 
     /**
      * Copies file to new location.
      *
-     * @param string $source
-     * @param string $target
+     * @param Path $source
+     * @param Path $target
      * @return void
      */
-    public function copy($source, $target);
+    public function copy(Path $source, Path $target);
 }

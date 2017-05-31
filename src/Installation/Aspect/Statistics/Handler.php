@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Installation\Aspect\Statistics;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 use AmaTeam\Vagranted\Model\Installation\StatisticsInterface;
 use DateTime;
@@ -15,7 +16,7 @@ use Symfony\Component\Serializer\Serializer;
 class Handler implements StatisticsInterface
 {
     /**
-     * @var string
+     * @var Path
      */
     private $path;
 
@@ -35,12 +36,12 @@ class Handler implements StatisticsInterface
     private $data;
 
     /**
-     * @param string $path
+     * @param Path $path
      * @param Serializer $serializer
      * @param AccessorInterface $filesystem
      */
     public function __construct(
-        $path,
+        Path $path,
         Serializer $serializer,
         AccessorInterface $filesystem
     ) {

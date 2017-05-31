@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Console;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Filesystem\Helper;
 use AmaTeam\Vagranted\Model\Configuration;
 use AmaTeam\Vagranted\Model\Configuration\LoggerConfiguration;
@@ -26,12 +27,16 @@ class ConfigurationExtractor
         $targetDirectory = $input->getOption(Options::TARGET_DIRECTORY);
         $targetDirectory = $targetDirectory ?: $projectDirectory;
         $dataDirectory = $input->getOption(Options::DATA_DIRECTORY);
-        $dataDirectory = $dataDirectory ?: Helper::getDefaultDataDirectory();
+        if ($dataDirectory !== null) {
+            $dataDirectory = Path::parse($dataDirectory);
+        } else {
+            $dataDirectory = Helper::getDefaultDataDirectory();
+        }
         $extras = $this->extractExtras($input);
         return (new Configuration())
-            ->setWorkingDirectory($workingDirectory)
-            ->setProjectDirectory($projectDirectory)
-            ->setTargetDirectory($targetDirectory)
+            ->setWorkingDirectory(Path::parse($workingDirectory))
+            ->setProjectDirectory(Path::parse($projectDirectory))
+            ->setTargetDirectory(Path::parse($targetDirectory))
             ->setDataDirectory($dataDirectory)
             ->setLogger($this->extractLoggerConfiguration($input))
             ->setExtras($extras);

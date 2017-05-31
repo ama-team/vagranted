@@ -1,6 +1,6 @@
 <?php
 
-namespace AmaTeam\Vagranted\Tests\Suite\E2E\Installer\Http;
+namespace AmaTeam\Vagranted\Tests\Suite\E2E\Installer\Git;
 
 use AmaTeam\Vagranted\Filesystem\Helper;
 use E2ETester;

@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Tests\Suite\Unit\Filesystem;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Filesystem\Accessor;
 use Codeception\Test\Unit;
 use SplFileInfo;
@@ -29,12 +30,17 @@ class AccessorTest extends Unit
         $this->accessor = new Accessor(new Filesystem());
     }
 
+    private function path($path)
+    {
+        return Path::parse($this->vfs->path($path));
+    }
+
     /**
      * @test
      */
     public function shouldSetAndReadFileWithNestedPath()
     {
-        $path = $this->vfs->path('/node/leaf');
+        $path = $this->path('/node/leaf');
         $contents = 'data' . PHP_EOL;
         $this->accessor->set($path, $contents);
         $this->assertEquals($contents, $this->accessor->get($path));
@@ -45,20 +51,20 @@ class AccessorTest extends Unit
      */
     public function shouldMirrorDirectory()
     {
-        $nodePath = $this->vfs->path('/node');
-        $targetPath = $this->vfs->path('/target/node');
+        $nodePath = $this->path('/node');
+        $targetPath = $this->path('/target/node');
         $leaves = [
             ['path' => 'leaf-a', 'contents' => 'leaf-a' . PHP_EOL,],
             ['path' => 'node/leaf-b', 'contents' => 'leaf-b' . PHP_EOL,],
         ];
         foreach ($leaves as $leaf) {
-            $path = $this->vfs->path('/node/' . $leaf['path']);
+            $path = $nodePath->resolve($leaf['path']);
             $this->accessor->set($path, $leaf['contents']);
         }
         $this->accessor->copy($nodePath, $targetPath);
 
         foreach ($leaves as $leaf) {
-            $path = $this->vfs->path('/target/node/' . $leaf['path']);
+            $path = $targetPath->resolve($leaf['path']);
             $this->assertEquals($leaf['contents'], $this->accessor->get($path));
         }
     }
@@ -68,8 +74,8 @@ class AccessorTest extends Unit
      */
     public function shouldMirrorFile()
     {
-        $source = $this->vfs->path('/node/leaf');
-        $target = $this->vfs->path('/target/leaf');
+        $source = $this->path('/node/leaf');
+        $target = $this->path('/target/leaf');
         $contents = 'leaf' . PHP_EOL;
         $this->accessor->set($source, $contents);
         $this->accessor->set($target, 'garbage content' . PHP_EOL);
@@ -82,7 +88,7 @@ class AccessorTest extends Unit
      */
     public function shouldIdempotentlyCreateDirectory()
     {
-        $path = $this->vfs->path('/node');
+        $path = $this->path('/node');
         $this->assertTrue($this->accessor->createDirectory($path));
         $this->assertFalse($this->accessor->createDirectory($path));
     }
@@ -92,7 +98,7 @@ class AccessorTest extends Unit
      */
     public function shouldIdempotentlyDeleteFile()
     {
-        $path = $this->vfs->path('/node/leaf');
+        $path = $this->path('/node/leaf');
         $this->accessor->set($path, 'leaf' . PHP_EOL);
         $this->assertTrue($this->accessor->delete($path));
         $this->assertFalse($this->accessor->delete($path));
@@ -103,7 +109,7 @@ class AccessorTest extends Unit
      */
     public function shouldIdempotentlyDeleteDirectory()
     {
-        $path = $this->vfs->path('/node');
+        $path = $this->path('/node');
         $this->accessor->createDirectory($path);
         $this->assertTrue($this->accessor->delete($path));
         $this->assertFalse($this->accessor->delete($path));
@@ -114,7 +120,7 @@ class AccessorTest extends Unit
      */
     public function shouldCorrectlyHandleInspectCall()
     {
-        $path = $this->vfs->path('/node');
+        $path = $this->path('/node');
         $this->assertNull($this->accessor->inspect($path));
         $this->accessor->createDirectory($path);
         $this->assertInstanceOf(SplFileInfo::class, $this->accessor->inspect($path));
@@ -125,17 +131,17 @@ class AccessorTest extends Unit
      */
     public function shouldReturnContentsOnEnumerateCall()
     {
-        $path = $this->vfs->path('/node');
+        $path = $this->path('/node');
         $leaves = ['leaf-a', 'leaf-b', 'node/leaf-c',];
         $expected = ['leaf-a', 'leaf-b', 'node',];
         foreach ($leaves as &$leaf) {
-            $leaf = $this->vfs->path("/node/$leaf");
+            $leaf = $path->resolve($leaf);
             $this->accessor->set($leaf, '');
         }
         foreach ($expected as &$expectation) {
-            $expectation = $this->vfs->path("/node/$expectation");
+            $expectation = $path->resolve($expectation);
         }
-        $this->accessor->set($this->vfs->path('/node/node/leaf-c'), '');
+        $this->accessor->set($this->path('/node/node/leaf-c'), '');
         $results = [];
         /** @var SplFileInfo $result */
         foreach ($this->accessor->enumerate($path, false) as $result) {
@@ -151,15 +157,15 @@ class AccessorTest extends Unit
      */
     public function shouldReturnAllContentsOnRecursiveEnumerateCall()
     {
-        $path = $this->vfs->path('/node');
+        $path = $this->path('/node');
         $leaves = ['leaf-a', 'leaf-b', 'node/leaf-c',];
         $expected = ['leaf-a', 'leaf-b', 'node', 'node/leaf-c',];
         foreach ($leaves as &$leaf) {
-            $leaf = $this->vfs->path("/node/$leaf");
+            $leaf = $path->resolve($leaf);
             $this->accessor->set($leaf, '');
         }
         foreach ($expected as &$expectation) {
-            $expectation = $this->vfs->path("/node/$expectation");
+            $expectation = $path->resolve($expectation);
         }
         $results = [];
         /** @var SplFileInfo $result */
@@ -176,10 +182,10 @@ class AccessorTest extends Unit
      */
     public function shouldIncludeDirectoriesInEnumeration()
     {
-        $path = $this->vfs->path('/node');
-        $directoryA = $this->vfs->path('/node/node-a');
-        $directoryB = $this->vfs->path('/node/node-b');
-        $directoryC = $this->vfs->path('/node/node-b/node-c');
+        $path = $this->path('/node');
+        $directoryA = $this->path('/node/node-a');
+        $directoryB = $this->path('/node/node-b');
+        $directoryC = $this->path('/node/node-b/node-c');
         $this->accessor->createDirectory($directoryA);
         $this->accessor->createDirectory($directoryC);
         $iterator = $this->accessor->enumerate($path);

@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Filesystem;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 use SplFileInfo;
 use Symfony\Component\Filesystem\Filesystem;
@@ -28,67 +29,72 @@ class Accessor implements AccessorInterface
     /**
      * @inheritdoc
      */
-    public function inspect($path)
+    public function inspect(Path $path)
     {
-        return $this->exists($path) ? new SplFileInfo($path) : null;
+        $location = $path->toPlatformString();
+        return $this->exists($path) ? new SplFileInfo($location) : null;
     }
 
-    public function get($path)
+    public function get(Path $path)
     {
-        return $this->exists($path) ? file_get_contents($path) : null;
+        $location = $path->toPlatformString();
+        return $this->exists($path) ? file_get_contents($location) : null;
     }
 
-    public function set($path, $contents)
+    public function set(Path $path, $contents)
     {
-        $this->createDirectory(dirname($path));
-        file_put_contents($path, $contents);
+        $this->createDirectory($path->getParent());
+        file_put_contents($path->toPlatformString(), $contents);
     }
 
-    public function delete($path)
+    public function delete(Path $path)
     {
         if (!$this->exists($path)) {
             return false;
         }
-        $this->helper->remove($path);
+        $this->helper->remove($path->toPlatformString());
         return true;
     }
 
-    public function enumerate($path, $recursive = false)
+    public function enumerate(Path $path, $recursive = false)
     {
-        $finder = (new Finder())->in($path);
+        $finder = (new Finder())->in($path->toPlatformString());
         if (!$recursive) {
             $finder = $finder->depth(0);
         }
         return $finder->getIterator();
     }
 
-    public function exists($path)
+    public function exists(Path $path)
     {
-        return file_exists($path);
+        return file_exists($path->toPlatformString());
     }
 
-    public function createDirectory($path)
+    public function createDirectory(Path $path)
     {
         if ($this->exists($path)) {
             return false;
         }
-        mkdir($path, 0777, true);
+        mkdir($path->toPlatformString(), 0777, true);
         return true;
     }
 
-    public function copy($source, $target)
+    public function copy(Path $source, Path $target)
     {
-        $parent = dirname($target);
-        if ($this->exists($target) && !is_dir($target)) {
+        $parent = $target->getParent();
+        if ($this->exists($target) && !is_dir($target->toPlatformString())) {
             $this->delete($target);
         } else if (!$this->exists($parent)) {
             $this->createDirectory($parent);
         }
         if (is_dir($source)) {
             $this->createDirectory($target);
-            $this->helper->mirror($source, $target);
+            $this->helper->mirror(
+                $source->toPlatformString(),
+                $target->toPlatformString()
+            );
         } else {
-            copy($source, $target);
+            copy($source->toPlatformString(), $target->toPlatformString());
         }
     }
 }

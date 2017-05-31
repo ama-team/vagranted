@@ -67,6 +67,6 @@ class SpecificationLoader implements AspectLoaderInterface
     {
         return $installation
             ->getWorkspace()
-            ->getPath(Constants::INSTALLATION_SPECIFICATION_FILE);
+            ->resolve(Constants::INSTALLATION_SPECIFICATION_FILE);
     }
 }

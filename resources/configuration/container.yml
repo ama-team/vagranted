@@ -61,6 +61,26 @@ services:
     class: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
     tags:
       - name: vagranted.io.serializer.normalizer
+        priority: 0
+  vagranted.io.serializer.normalizer.path:
+    class: AmaTeam\Vagranted\Support\Symfony\Serializer\PathNormalizer
+    tags:
+      - name: vagranted.io.serializer.normalizer
+        priority: 10
+  vagranted.io.serializer.normalizer.date:
+    class: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+    arguments:
+      - 'Y-m-d\TH:i:sO'
+    tags:
+      - name: vagranted.io.serializer.normalizer
+        priority: 10
+  vagranted.io.serializer.normalizer.installed_resource_set:
+    class: \AmaTeam\Vagranted\Support\Symfony\Serializer\InstalledResourceSetNormalizer
+    arguments:
+      - '@vagranted.io.serializer.normalizer.default'
+    tags:
+      - name: vagranted.io.serializer.normalizer
+        priority: 10
   vagranted.io.serializer.encoder.yaml:
     class: Symfony\Component\Serializer\Encoder\YamlEncoder
     arguments:
@@ -82,8 +102,8 @@ services:
     class: AmaTeam\Vagranted\Filesystem\Accessor
     arguments:
       - '@vagranted.io.filesystem.helper'
-  vagranted.io.filesystem.pattern_locator:
-    class: AmaTeam\Vagranted\Filesystem\PatternLocator
+  vagranted.io.filesystem.file_pattern_locator:
+    class: AmaTeam\Vagranted\Filesystem\FilePatternLocator
     arguments:
       - '@vagranted.io.filesystem'
       - '@vagranted.twig.inline'
@@ -146,9 +166,9 @@ services:
   vagranted.resource_set.reader:
     class: AmaTeam\Vagranted\ResourceSet\Reader
     arguments:
-      - '@vagranted.configuration.container'
+      - '@vagranted.structure'
       - '@vagranted.resource_set.configuration.reader'
-      - '@vagranted.io.filesystem.pattern_locator'
+      - '@vagranted.io.filesystem.file_pattern_locator'
   vagranted.resource_set.loader:
     class: AmaTeam\Vagranted\ResourceSet\Loader
     arguments:

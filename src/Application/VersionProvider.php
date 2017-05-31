@@ -46,7 +46,10 @@ class VersionProvider
      */
     public function getVersion()
     {
-        $path = $this->structure->getSourceDirectory() . '/composer.json';
+        $path = $this
+            ->structure
+            ->getSourceDirectory()
+            ->resolve('composer.json');
         $contents = $this->filesystem->get($path);
         $data = $this->serializer->decode($contents, 'json');
         return isset($data['version']) ? $data['version'] : null;

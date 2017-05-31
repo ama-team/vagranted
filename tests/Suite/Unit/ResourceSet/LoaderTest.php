@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Tests\Suite\Unit\ResourceSet;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Installation\Manager;
 use AmaTeam\Vagranted\Model\Filesystem\Workspace;
 use AmaTeam\Vagranted\Model\Installation\Installation;
@@ -48,13 +49,13 @@ class LoaderTest extends Unit
         $this->reader = $this->createMock(Reader::class);
         $this->set = (new ResourceSet())
             ->setName('test-set')
-            ->setWorkspace(new Workspace('/'))
+            ->setWorkspace(new Workspace(Path::parse('/')))
             ->setConfiguration(new Configuration())
             ->setTemplates([])
             ->setAssets([]);
         $this->installation = (new Installation())
             ->setId('test-set')
-            ->setWorkspace(new Workspace('/'))
+            ->setWorkspace(new Workspace(Path::parse('/')))
             ->setSet($this->set);
         $this->loader = new Loader($this->manager, $this->reader);
     }

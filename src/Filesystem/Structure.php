@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Filesystem;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Application\Configuration\Container;
 
 /**
@@ -24,50 +25,41 @@ class Structure
         $this->configuration = $configuration;
     }
 
+    public function getDataDirectory()
+    {
+        return Path::parse($this->configuration->get()->getDataDirectory());
+    }
+
     public function getInstallationDirectory()
     {
-        return $this->join(
-            $this->configuration->get()->getDataDirectory(),
-            'resource-sets'
-        );
+        // todo hardcode
+        return $this->getDataDirectory()->resolve('resource-sets');
     }
 
     public function getCacheDirectory()
     {
-        return $this->join($this->configuration->get()->getDataDirectory(), 'cache');
+        // todo hardcode
+        return $this->getDataDirectory()->resolve('cache');
     }
 
     public function getWorkingDirectory()
     {
-        return $this->configuration->get()->getWorkingDirectory();
-    }
-
-    public function getInstallLocation($id)
-    {
-        return $this->join($this->getInstallationDirectory(), $id);
+        return Path::parse($this->configuration->get()->getWorkingDirectory());
     }
 
     public function getConfigurationDirectory()
     {
-        return $this->join(
-            $this->configuration->get()->getProjectDirectory(),
-            'resources',
-            'configuration'
-        );
+        // todo hardcode
+        return $this->getProjectDirectory()->resolve('resources/configuration');
     }
 
     public function getSourceDirectory()
     {
-        return Helper::getInstallationRoot();
+        return Path::parse(Helper::getInstallationRoot());
     }
 
     public function getProjectDirectory()
     {
-        return $this->configuration->get()->getProjectDirectory();
-    }
-
-    private function join()
-    {
-        return implode(DIRECTORY_SEPARATOR, func_get_args());
+        return Path::parse($this->configuration->get()->getProjectDirectory());
     }
 }

@@ -63,8 +63,8 @@ class AssetInstaller implements AspectCompilerInterface, LoggerAwareInterface
         $asset,
         $target
     ) {
-        $asset = $set->getWorkspace()->getPath($asset);
-        $path = $workspace->getPath($target);
+        $asset = $set->getWorkspace()->resolve($asset);
+        $path = $workspace->resolve($target);
         $context = [
             'asset' => $asset,
             'set' => $set->getName(),

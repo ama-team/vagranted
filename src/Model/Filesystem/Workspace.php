@@ -2,31 +2,39 @@
 
 namespace AmaTeam\Vagranted\Model\Filesystem;
 
+use AmaTeam\Pathetic\Path;
+
 /**
  * @author Etki <etki@etki.me>
  */
 class Workspace implements WorkspaceInterface
 {
     /**
-     * @var string
+     * @var Path
      */
     private $path;
 
     /**
-     * @param string $path
+     * @param Path $path
      */
-    public function __construct($path)
+    public function __construct(Path $path)
     {
         $this->path = $path;
     }
 
     /**
-     * @param string $path
-     *
-     * @return string
+     * @inheritdoc
      */
-    public function getPath($path = null)
+    public function getPath()
     {
-        return $path ? $this->path . DIRECTORY_SEPARATOR . $path : $this->path;
+        return $this->path;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function resolve($path)
+    {
+        return $this->path->resolve($path);
     }
 }

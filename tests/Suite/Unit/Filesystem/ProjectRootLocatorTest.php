@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Tests\Suite\Unit\Filesystem;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Filesystem\ProjectRootLocator;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 use Codeception\Test\Unit;
@@ -58,6 +59,6 @@ class ProjectRootLocatorTest extends Unit
             ->willReturnCallback(function ($path) use ($paths) {
                 return in_array($path, $paths);
             });
-        $this->assertEquals($result, $this->locator->locate($cwd));
+        $this->assertEquals($result, $this->locator->locate(Path::parse($cwd)));
     }
 }

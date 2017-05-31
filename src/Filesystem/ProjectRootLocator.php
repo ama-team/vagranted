@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Filesystem;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 
 /**
@@ -25,14 +26,16 @@ class ProjectRootLocator
     }
 
     /**
-     * @param string $workingDirectory
+     * @param Path $workingDirectory
      * @return string
      */
-    public function locate($workingDirectory)
+    public function locate(Path $workingDirectory)
     {
-        foreach (Helper::unroll($workingDirectory) as $candidate) {
+        /** @var Path[] $candidates */
+        $candidates = array_reverse($workingDirectory->enumerate());
+        foreach ($candidates as $candidate) {
             // todo hardcode
-            $path = $candidate . DIRECTORY_SEPARATOR . 'vagranted.yml';
+            $path = $candidate->resolve('vagranted.yml');
             if ($this->filesystem->exists($path)) {
                 return $candidate;
             }

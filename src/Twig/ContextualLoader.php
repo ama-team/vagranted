@@ -121,7 +121,7 @@ class ContextualLoader implements
             $setId = substr($name, 0, $delimiterPosition);
             $templatePath = substr($name, $delimiterPosition + 1);
             if (isset($sets[$setId])) {
-                $path = $sets[$setId]->getWorkspace()->getPath($templatePath);
+                $path = $sets[$setId]->getWorkspace()->resolve($templatePath);
                 $variants[] = $path;
             }
         }
@@ -132,7 +132,7 @@ class ContextualLoader implements
                 ->getProject()
                 ->getSet()
                 ->getWorkspace()
-                ->getPath($name);
+                ->resolve($name);
         }
         $variants[] = $path;
         return $variants;

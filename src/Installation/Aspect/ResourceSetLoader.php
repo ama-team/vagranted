@@ -52,7 +52,7 @@ class ResourceSetLoader implements AspectLoaderInterface
     {
         $path = $installation
             ->getWorkspace()
-            ->getPath(Constants::INSTALLATION_ARTIFACT_DIRECTORY);
+            ->resolve(Constants::INSTALLATION_ARTIFACT_DIRECTORY);
         $set = $this->reader->read($path);
         $wrapper = (new InstalledResourceSet($set))
             ->setInstallation($installation);

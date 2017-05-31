@@ -2,7 +2,7 @@
 
 namespace AmaTeam\Vagranted\Model\Installation;
 
-use AmaTeam\Vagranted\Model\Filesystem\Workspace;
+use AmaTeam\Vagranted\Model\Filesystem\WorkspaceInterface;
 use AmaTeam\Vagranted\Model\ResourceSet\ResourceSetInterface;
 
 /**
@@ -16,7 +16,7 @@ class Installation
     private $id;
 
     /**
-     * @var Workspace
+     * @var WorkspaceInterface
      */
     private $workspace;
 
@@ -54,7 +54,7 @@ class Installation
     }
 
     /**
-     * @return Workspace
+     * @return WorkspaceInterface
      */
     public function getWorkspace()
     {
@@ -62,10 +62,10 @@ class Installation
     }
 
     /**
-     * @param Workspace $workspace
+     * @param WorkspaceInterface $workspace
      * @return $this
      */
-    public function setWorkspace($workspace)
+    public function setWorkspace(WorkspaceInterface $workspace)
     {
         $this->workspace = $workspace;
         return $this;

@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Installation;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Event\EventDispatcherAwareInterface;
 use AmaTeam\Vagranted\Event\EventDispatcherAwareTrait;
 use AmaTeam\Vagranted\Filesystem\Structure;
@@ -35,8 +36,10 @@ class Storage implements LoggerAwareInterface, EventDispatcherAwareInterface
      * @param Structure $structure
      * @param AccessorInterface $filesystem
      */
-    public function __construct(Structure $structure, AccessorInterface $filesystem)
-    {
+    public function __construct(
+        Structure $structure,
+        AccessorInterface $filesystem
+    ) {
         $this->structure = $structure;
         $this->filesystem = $filesystem;
     }
@@ -105,7 +108,7 @@ class Storage implements LoggerAwareInterface, EventDispatcherAwareInterface
         $directory = $this->structure->getInstallationDirectory();
         $iterator = $this->filesystem->enumerate($directory);
         $mapper = function (SplFileInfo $entry) {
-            return new Workspace($entry->getPathname());
+            return new Workspace(Path::parse($entry->getPathname()));
         };
         return new MappingIterator($iterator, $mapper);
     }
@@ -117,8 +120,6 @@ class Storage implements LoggerAwareInterface, EventDispatcherAwareInterface
 
     private function composePath($name)
     {
-        return $this->structure->getInstallationDirectory() .
-            DIRECTORY_SEPARATOR .
-            $name;
+        return $this->structure->getInstallationDirectory()->resolve($name);
     }
 }

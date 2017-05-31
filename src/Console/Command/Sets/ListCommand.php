@@ -26,12 +26,8 @@ class ListCommand extends AbstractResourceSetCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $installations = $this->getApi()->getResourceSetAPI()->enumerate();
-        $installations->rewind();
-        if (!$installations->valid()) {
-            $output->writeln('<error>Whoops, no sets installed</error>');
-            return 0;
-        }
         $output->writeln('Installed sets:');
+        $counter = 0;
         /** @var Installation $installation */
         foreach ($installations as $installation) {
             $message = sprintf(
@@ -40,7 +36,9 @@ class ListCommand extends AbstractResourceSetCommand
                 $installation->getSpecification()->getUri()
             );
             $output->writeln($message);
+            $counter++;
         }
+        $output->writeln(sprintf('Total: %d', $counter));
         return 0;
     }
 }

@@ -2,11 +2,10 @@
 
 namespace AmaTeam\Vagranted\ResourceSet;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Application\Configuration\Constants;
-use AmaTeam\Vagranted\Application\Configuration\Container;
-use AmaTeam\Vagranted\Filesystem\Helper;
-use AmaTeam\Vagranted\Filesystem\PatternLocator;
-use AmaTeam\Vagranted\Model\Exception\RuntimeException;
+use AmaTeam\Vagranted\Filesystem\FilePatternLocator;
+use AmaTeam\Vagranted\Filesystem\Structure;
 use AmaTeam\Vagranted\Model\Filesystem\Workspace;
 use AmaTeam\Vagranted\Model\ResourceSet\Configuration;
 use AmaTeam\Vagranted\Model\ResourceSet\ResourceSet;
@@ -19,9 +18,9 @@ use AmaTeam\Vagranted\ResourceSet\Configuration\Reader as ConfigurationReader;
 class Reader
 {
     /**
-     * @var Container
+     * @var Structure
      */
-    private $configuration;
+    private $structure;
 
     /**
      * @var ConfigurationReader
@@ -29,40 +28,32 @@ class Reader
     private $reader;
 
     /**
-     * @var PatternLocator
+     * @var FilePatternLocator
      */
     private $locator;
 
     /**
-     * @param Container $configuration
+     * @param Structure $structure
      * @param ConfigurationReader $reader
-     * @param PatternLocator $locator
+     * @param FilePatternLocator $locator
      */
     public function __construct(
-        Container $configuration,
+        Structure $structure,
         ConfigurationReader $reader,
-        PatternLocator $locator
+        FilePatternLocator $locator
     ) {
-        $this->configuration = $configuration;
+        $this->structure = $structure;
         $this->reader = $reader;
         $this->locator = $locator;
     }
 
     /**
-     * @param string $path
+     * @param Path $path
      * @return ResourceSetInterface
      */
-    public function read($path)
+    public function read(Path $path)
     {
-        if (!Helper::isAbsolutePath($path)) {
-            $base = $this->configuration->get()->getProjectDirectory();
-            $path = $base . DIRECTORY_SEPARATOR . $path;
-            $path = realpath($path);
-        }
-        if (!$path) {
-            $message = 'Nonexisting resource set specified: ' . $path;
-            throw new RuntimeException($message);
-        }
+        $path = $this->structure->getProjectDirectory()->resolve($path);
         $configuration = $this->readConfiguration($path);
         return (new ResourceSet())
             ->setName($path)
@@ -72,10 +63,9 @@ class Reader
             ->setTemplates($this->locateTemplates($path, $configuration));
     }
 
-    private function readConfiguration($path)
+    private function readConfiguration(Path $path)
     {
-        $chunks = [$path, Constants::RESOURCE_SET_CONFIGURATION_FILE];
-        $location = implode(DIRECTORY_SEPARATOR, $chunks);
+        $location = $path->resolve(Constants::RESOURCE_SET_CONFIGURATION_FILE);
         return $this->reader->read($location);
     }
 

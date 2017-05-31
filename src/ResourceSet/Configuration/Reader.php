@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\ResourceSet\Configuration;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 use AmaTeam\Vagranted\Model\ResourceSet\Configuration;
 use AmaTeam\Vagranted\Model\ResourceSet\Configuration\AssetFilter;
@@ -37,7 +38,7 @@ class Reader
         $this->serializer = $serializer;
     }
 
-    public function read($path)
+    public function read(Path $path)
     {
         if (!$this->filesystem->exists($path)) {
             return new Configuration();

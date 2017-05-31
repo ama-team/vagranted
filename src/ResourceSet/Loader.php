@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\ResourceSet;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Application\Configuration\Constants;
 use AmaTeam\Vagranted\Installation\Manager;
 use AmaTeam\Vagranted\Model\ResourceSet\ResourceSetInterface;
@@ -47,7 +48,8 @@ class Loader implements LoggerAwareInterface
     {
         $schema = $this->extractSchema($uri);
         if (empty($schema) || in_array($schema, Constants::LOCAL_SCHEMAS)) {
-            return $this->reader->read($this->stripSchema($uri));
+            $path = Path::parse($uri)->withoutScheme();
+            return $this->reader->read($path);
         }
         $manager = $this->manager;
         $installation = $manager->get($uri) ?: $manager->install($uri);
@@ -59,12 +61,5 @@ class Loader implements LoggerAwareInterface
         $position = strpos($uri, '://');
         // if position === 0, empty schema is returned, which is equal to null
         return $position ? substr($uri, 0, $position) : null;
-    }
-
-    private function stripSchema($uri)
-    {
-        $position = strpos($uri, '://');
-        // if position === 0, empty schema is returned, which is equal to null
-        return $position === false ? $uri : substr($uri, $position + 3);
     }
 }

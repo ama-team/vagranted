@@ -2,8 +2,9 @@
 
 namespace AmaTeam\Vagranted\Tests\Suite\Unit\Filesystem;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
-use AmaTeam\Vagranted\Filesystem\PatternLocator;
+use AmaTeam\Vagranted\Filesystem\FilePatternLocator;
 use AmaTeam\Vagranted\Model\Filesystem\ExclusiveFilePatternInterface;
 use AmaTeam\Vagranted\Model\Filesystem\FilePatternInterface;
 use AmaTeam\Vagranted\Model\Filesystem\RenamingFilePatternInterface;
@@ -16,10 +17,10 @@ use Twig_Loader_Array;
 /**
  * @author Etki <etki@etki.me>
  */
-class PatternLocatorTest extends Unit
+class FilePatternLocatorTest extends Unit
 {
     /**
-     * @var PatternLocator
+     * @var FilePatternLocator
      */
     private $locator;
 
@@ -33,23 +34,16 @@ class PatternLocatorTest extends Unit
      */
     private $twig;
 
-    public function _before()
+    protected function _before()
     {
         $this->filesystem = $this->createMock(AccessorInterface::class);
         $this->twig = new Twig_Environment(new Twig_Loader_Array([]));
-        $this->locator = new PatternLocator($this->filesystem, $this->twig);
+        $this->locator = new FilePatternLocator($this->filesystem, $this->twig);
     }
 
     private function path($path)
     {
-        if (DIRECTORY_SEPARATOR === '/') {
-            return $path;
-        }
-        $path = str_replace('/', '\\', $path);
-        if (strlen($path) > 0 && $path[0] === '\\') {
-            $path = 'c:' . $path;
-        }
-        return $path;
+        return Path::parse($path);
     }
 
     private function results(array $paths)
@@ -69,7 +63,7 @@ class PatternLocatorTest extends Unit
     {
         $paths = [];
         foreach ($results as $key => $value) {
-            $paths[$this->path($key)] = $this->path($value);
+            $paths[(string) $this->path($key)] = (string) $this->path($value);
         }
         return $paths;
     }
@@ -78,8 +72,8 @@ class PatternLocatorTest extends Unit
     {
         $paths = [];
         foreach ($results as $key => $values) {
-            $paths[$this->path($key)] = array_map(function ($value) {
-                return $this->path($value);
+            $paths[(string) $this->path($key)] = array_map(function ($value) {
+                return (string) $this->path($value);
             }, $values);
         }
         return $paths;
@@ -267,7 +261,7 @@ class PatternLocatorTest extends Unit
             'resources/chef/data_bags/users.yml' => ['resources/chef/data_bags/users.yml'],
             'resources/docker/Dockerfile' => ['docker/resources/docker/Dockerfile']
         ];
-        $results = $this->normalizeMany($this->locator->locateMany('/', $patterns));
+        $results = $this->normalizeMany($this->locator->locateMany($this->path('/'), $patterns));
         $this->assertEquals($expectations, $results);
     }
 }

@@ -79,7 +79,7 @@ class StorageController implements
         $installer = $this->installers->requireOne($uri);
         $workspace = $this->storage->create($id);
         $target = $workspace
-            ->getPath(Constants::INSTALLATION_ARTIFACT_DIRECTORY);
+            ->resolve(Constants::INSTALLATION_ARTIFACT_DIRECTORY);
         $this->filesystem->createDirectory($target);
         $specification = $installer->install($uri, $target);
         $specification = $specification ?: new Specification();

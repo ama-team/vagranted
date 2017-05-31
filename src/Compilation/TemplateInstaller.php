@@ -67,8 +67,8 @@ class TemplateInstaller implements AspectCompilerInterface, LoggerAwareInterface
                 $format = 'Rendering template `{template}` from set `{set}` ' .
                     'to `{target}`';
                 $this->logger->debug($format, $loggerContext);
-                $source = $set->getWorkspace()->getPath($template);
-                $target = $workspace->getPath($target);
+                $source = $set->getWorkspace()->resolve($template);
+                $target = $workspace->resolve($target);
                 $template = $twig->load($source);
                 try {
                     $content = $template->render($context->getContext());

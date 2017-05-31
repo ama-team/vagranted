@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Filesystem;
 
+use AmaTeam\Pathetic\Path;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -59,25 +60,26 @@ class Helper
     /**
      * Returns Vagranted installation root.
      *
-     * @return string
+     * @return Path
      */
     public static function getInstallationRoot()
     {
-        return dirname(dirname(__DIR__));
+        return Path::parse(__DIR__)->getParent()->getParent();
     }
 
     /**
-     * @return string
+     * @return Path
      */
     public static function getDefaultDataDirectory()
     {
         if (getenv('HOME')) {
-            return getenv('HOME') . '/.cache/ama-team/vagranted';
+            $path = getenv('HOME') . '/.cache/ama-team/vagranted';
+        } else if (getenv('LocalAppData')) {
+            $path = getenv('LocalAppData') . '/AMA Team/Vagranted';
+        } else {
+            $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'vagranted';
         }
-        if (getenv('LocalAppData')) {
-            return getenv('LocalAppData') . '\\AMA Team\\Vagranted';
-        }
-        return sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'vagranted';
+        return Path::parse($path);
     }
 
     /**

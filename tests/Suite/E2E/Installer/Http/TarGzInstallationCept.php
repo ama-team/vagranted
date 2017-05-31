@@ -6,13 +6,13 @@ use AmaTeam\Vagranted\Filesystem\Helper;
 use E2ETester;
 
 $root = Helper::getInstallationRoot();
-$executable = "$root/bin/vagranted";
+$executable = $root->resolve('bin/vagranted');
 $set = 'https+tar.gz://github.com/ama-team/vagranted-php-box/archive/0.1.0.tar.gz';
 
 $I = new E2ETester($scenario);
+// yeah this is lame
 if (DIRECTORY_SEPARATOR !== '/') {
-    // yeah this is lame
-    $I->wantTo('Not ot test tar.gz installer because it isn\'t supported for non-unix platforms');
+    $scenario->skip('Tar.gz inflation is not supported on windows');
     return;
 }
 $I->wantTo('Test tar.gz installer');

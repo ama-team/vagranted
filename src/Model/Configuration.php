@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Model;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Model\Configuration\LoggerConfiguration;
 
 /**
@@ -12,28 +13,28 @@ class Configuration
     /**
      * Directory of the project that requires vagranted support.
      *
-     * @var string
+     * @var Path
      */
     private $projectDirectory;
 
     /**
      * Current working directory.
      *
-     * @var string
+     * @var Path
      */
     private $workingDirectory;
 
     /**
      * Data directory - place where application may store it's belongings.
      *
-     * @var string
+     * @var Path
      */
     private $dataDirectory;
 
     /**
      * Target directory - where the result is going to be compiled.
      *
-     * @var string
+     * @var Path
      */
     private $targetDirectory;
 
@@ -49,13 +50,16 @@ class Configuration
      */
     private $extras = [];
 
+    /**
+     * Initializer
+     */
     public function __construct()
     {
         $this->logger = new LoggerConfiguration();
     }
 
     /**
-     * @return string
+     * @return Path
      */
     public function getWorkingDirectory()
     {
@@ -63,17 +67,17 @@ class Configuration
     }
 
     /**
-     * @param string $workingDirectory
+     * @param Path $workingDirectory
      * @return $this
      */
-    public function setWorkingDirectory($workingDirectory)
+    public function setWorkingDirectory(Path $workingDirectory)
     {
         $this->workingDirectory = $workingDirectory;
         return $this;
     }
 
     /**
-     * @return mixed
+     * @return Path
      */
     public function getDataDirectory()
     {
@@ -81,17 +85,17 @@ class Configuration
     }
 
     /**
-     * @param mixed $dataDirectory
+     * @param Path $dataDirectory
      * @return $this
      */
-    public function setDataDirectory($dataDirectory)
+    public function setDataDirectory(Path $dataDirectory)
     {
         $this->dataDirectory = $dataDirectory;
         return $this;
     }
 
     /**
-     * @return string
+     * @return Path
      */
     public function getProjectDirectory()
     {
@@ -99,17 +103,17 @@ class Configuration
     }
 
     /**
-     * @param string $projectDirectory
+     * @param Path $projectDirectory
      * @return $this
      */
-    public function setProjectDirectory($projectDirectory)
+    public function setProjectDirectory(Path $projectDirectory)
     {
         $this->projectDirectory = $projectDirectory;
         return $this;
     }
 
     /**
-     * @return string
+     * @return Path
      */
     public function getTargetDirectory()
     {
@@ -117,10 +121,10 @@ class Configuration
     }
 
     /**
-     * @param string $targetDirectory
+     * @param Path $targetDirectory
      * @return $this
      */
-    public function setTargetDirectory($targetDirectory)
+    public function setTargetDirectory(Path $targetDirectory)
     {
         $this->targetDirectory = $targetDirectory;
         return $this;

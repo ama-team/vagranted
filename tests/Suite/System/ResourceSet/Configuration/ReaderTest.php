@@ -2,6 +2,7 @@
 
 namespace AmaTeam\Vagranted\Tests\Suite\System\ResourceSet\Configuration;
 
+use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Filesystem\Accessor;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 use AmaTeam\Vagranted\ResourceSet\Configuration\Reader;
@@ -50,12 +51,17 @@ class ReaderTest extends Unit
         $this->reader = new Reader($this->filesystem, $this->serializer);
     }
 
+    private function path($path)
+    {
+        return Path::parse($this->vfs->path($path));
+    }
+
     /**
      * @test
      */
     public function shouldHandleMissingConfiguration()
     {
-        $path = $this->vfs->path('/vagranted/resource-set/vagranted.yml');
+        $path = $this->path('/vagranted/resource-set/vagranted.yml');
         $configuration = $this->reader->read($path);
         $this->assertNotNull($configuration);
         $this->assertNull($configuration->getName());
@@ -71,7 +77,7 @@ class ReaderTest extends Unit
      */
     public function shouldNormalizeAsExpected()
     {
-        $path = $this->vfs->path('/vagranted/resource-set/vagranted.yml');
+        $path = $this->path('/vagranted/resource-set/vagranted.yml');
         $templates = [
             '**/*.twig',
             [
