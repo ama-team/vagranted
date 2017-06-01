@@ -31,6 +31,11 @@ install:
   - echo extension=php_curl.dll >> php.ini
   - echo extension=php_mbstring.dll >> php.ini
   - echo extension=php_fileinfo.dll >> php.ini
+    # curl
+  - appveyor DownloadFile https://curl.haxx.se/ca/cacert.pem
+  - move cacert.pem c:\php\cacert.pem
+  - echo curl.cainfo=c:\php\cacert.pem >> php.ini
+  - echo openssl.cafile=c:\php\cacert.pem >> php.ini
     # Xdebug
   - IF %PHP%==1 appveyor DownloadFile https://xdebug.org/files/php_xdebug-2.5.1-7.1-vc14-nts-x86_64.dll
   - mv php_xdebug-2.5.1-7.1-vc14-nts-x86_64.dll ext\
@@ -43,5 +48,4 @@ install:
 
 test_script:
   - cd %PROJECT_DIRECTORY%
-  - php -m
   - composer test
