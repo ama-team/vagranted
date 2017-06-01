@@ -37,8 +37,12 @@ class GitInstaller implements
 
     /**
      * @param Container $configuration
+     * @param Factory $factory
      */
-    public function __construct(Container $configuration, Factory $factory) {
+    public function __construct(
+        Container $configuration,
+        Factory $factory
+    ) {
         $this->configuration = $configuration;
         $this->factory = $factory;
     }
@@ -94,6 +98,10 @@ class GitInstaller implements
         $git = $this->createGit($path);
         $git->clone($repository, $path);
         $git->checkout($revision);
+        // todo ugliest hack ever
+        if (DIRECTORY_SEPARATOR === '\\') {
+            exec(sprintf('attrib -r -h /s /d "%s\\**"', $path));
+        }
         return (new Specification())
             ->setUri($uri)
             ->setRevision($revision ?: $this->computeBranch($git))
