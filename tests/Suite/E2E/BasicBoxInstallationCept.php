@@ -8,9 +8,9 @@ use Codeception\Configuration;
 use E2ETester;
 
 $root = Helper::getInstallationRoot();
-$executable = "$root/bin/vagranted";
-$project = "$root/tests/Fixtures/E2E/1/project";
-$target = "$root/tests/Fixtures/E2E/1/target";
+$executable = $root->resolve('bin/vagranted')->toPlatformString();
+$project = $root->resolve('tests/Fixtures/E2E/1/project')->toPlatformString();
+$target = $root->resolve('tests/Fixtures/E2E/1/target')->toPlatformString();
 
 $I = new E2ETester($scenario);
 $I->runShellCommand("php $executable compile --project $project --target $target --log-level debug");
