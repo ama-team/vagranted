@@ -10,13 +10,13 @@ use AmaTeam\Vagranted\Model\ResourceSet\Configuration;
 use AmaTeam\Vagranted\Model\ResourceSet\ResourceSet;
 use AmaTeam\Vagranted\ResourceSet\Loader;
 use AmaTeam\Vagranted\ResourceSet\Reader;
-use Codeception\Test\Unit;
+use AmaTeam\Vagranted\Tests\Support\Test;
 use PHPUnit_Framework_MockObject_MockObject as Mock;
 
 /**
  * @author Etki <etki@etki.me>
  */
-class LoaderTest extends Unit
+class LoaderTest extends Test
 {
     /**
      * @var Manager|Mock

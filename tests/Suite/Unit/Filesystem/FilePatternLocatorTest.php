@@ -8,7 +8,7 @@ use AmaTeam\Vagranted\Filesystem\FilePatternLocator;
 use AmaTeam\Vagranted\Model\Filesystem\ExclusiveFilePatternInterface;
 use AmaTeam\Vagranted\Model\Filesystem\FilePatternInterface;
 use AmaTeam\Vagranted\Model\Filesystem\RenamingFilePatternInterface;
-use Codeception\Test\Unit;
+use AmaTeam\Vagranted\Tests\Support\Test;
 use PHPUnit_Framework_MockObject_MockObject as Mock;
 use SplFileInfo;
 use Twig_Environment;
@@ -17,7 +17,7 @@ use Twig_Loader_Array;
 /**
  * @author Etki <etki@etki.me>
  */
-class FilePatternLocatorTest extends Unit
+class FilePatternLocatorTest extends Test
 {
     /**
      * @var FilePatternLocator

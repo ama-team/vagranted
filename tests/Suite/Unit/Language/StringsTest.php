@@ -3,12 +3,12 @@
 namespace AmaTeam\Vagranted\Tests\Suite\Unit\Language;
 
 use AmaTeam\Vagranted\Language\Strings;
-use Codeception\Test\Unit;
+use AmaTeam\Vagranted\Tests\Support\Test;
 
 /**
  * @author Etki <etki@etki.me>
  */
-class StringsTest extends Unit
+class StringsTest extends Test
 {
     public function dataProvider()
     {

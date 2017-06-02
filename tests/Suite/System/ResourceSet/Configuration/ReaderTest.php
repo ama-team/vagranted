@@ -6,7 +6,7 @@ use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Filesystem\Accessor;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
 use AmaTeam\Vagranted\ResourceSet\Configuration\Reader;
-use Codeception\Test\Unit;
+use AmaTeam\Vagranted\Tests\Support\Test;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Serializer\Encoder\YamlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -17,7 +17,7 @@ use VirtualFileSystem\FileSystem as VFS;
 /**
  * @author Etki <etki@etki.me>
  */
-class ReaderTest extends Unit
+class ReaderTest extends Test
 {
 
     /**

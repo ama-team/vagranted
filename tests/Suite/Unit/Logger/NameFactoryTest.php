@@ -3,12 +3,12 @@
 namespace AmaTeam\Vagranted\Tests\Suite\Unit\Logger;
 
 use AmaTeam\Vagranted\Logger\NameFactory;
-use Codeception\Test\Unit;
+use AmaTeam\Vagranted\Tests\Support\Test;
 
 /**
  * @author Etki <etki@etki.me>
  */
-class NameFactoryTest extends Unit
+class NameFactoryTest extends Test
 {
     public function dataProvider()
     {

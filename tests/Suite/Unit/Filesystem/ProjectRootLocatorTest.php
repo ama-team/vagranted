@@ -5,13 +5,13 @@ namespace AmaTeam\Vagranted\Tests\Suite\Unit\Filesystem;
 use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Filesystem\ProjectRootLocator;
 use AmaTeam\Vagranted\Model\Filesystem\AccessorInterface;
-use Codeception\Test\Unit;
+use AmaTeam\Vagranted\Tests\Support\Test;
 use PHPUnit_Framework_MockObject_MockObject as Mock;
 
 /**
  * @author Etki <etki@etki.me>
  */
-class ProjectRootLocatorTest extends Unit
+class ProjectRootLocatorTest extends Test
 {
     /**
      * @var AccessorInterface|Mock

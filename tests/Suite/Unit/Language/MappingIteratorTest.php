@@ -3,13 +3,13 @@
 namespace AmaTeam\Vagranted\Tests\Suite\Unit\Language;
 
 use AmaTeam\Vagranted\Language\MappingIterator;
+use AmaTeam\Vagranted\Tests\Support\Test;
 use ArrayIterator;
-use Codeception\Test\Unit;
 
 /**
  * @author Etki <etki@etki.me>
  */
-class MappingIteratorTest extends Unit
+class MappingIteratorTest extends Test
 {
     /**
      * @test

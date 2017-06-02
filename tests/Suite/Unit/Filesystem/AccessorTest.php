@@ -4,7 +4,7 @@ namespace AmaTeam\Vagranted\Tests\Suite\Unit\Filesystem;
 
 use AmaTeam\Pathetic\Path;
 use AmaTeam\Vagranted\Filesystem\Accessor;
-use Codeception\Test\Unit;
+use AmaTeam\Vagranted\Tests\Support\Test;
 use SplFileInfo;
 use Symfony\Component\Filesystem\Filesystem;
 use VirtualFileSystem\FileSystem as VFS;
@@ -12,7 +12,7 @@ use VirtualFileSystem\FileSystem as VFS;
 /**
  * @author Etki <etki@etki.me>
  */
-class AccessorTest extends Unit
+class AccessorTest extends Test
 {
     /**
      * @var VFS
