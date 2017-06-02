@@ -7,6 +7,7 @@ use AmaTeam\Vagranted\Filesystem\Helper;
 use AmaTeam\Vagranted\Filesystem\ProjectRootLocator;
 use AmaTeam\Vagranted\Model\Configuration;
 use AmaTeam\Vagranted\Model\Configuration\LoggerConfiguration;
+use AmaTeam\Vagranted\Model\ConfigurationInterface;
 
 /**
  * @author Etki <etki@etki.me>
@@ -29,30 +30,34 @@ class Normalizer
     /**
      * Fills missing configuration fields with default values.
      *
-     * @param Configuration $configuration
+     * @param ConfigurationInterface $configuration
      * @return Configuration
      */
-    public function normalize(Configuration $configuration)
+    public function normalize(ConfigurationInterface $configuration)
     {
-        $configuration = $configuration ?: new Configuration();
+        $normalized = new Configuration();
         $cwd = Path::parse(getcwd());
         $workingDirectory = $configuration->getWorkingDirectory() ?: $cwd;
         $workingDirectory = $cwd->resolve($workingDirectory);
-        $configuration->setWorkingDirectory($workingDirectory);
+        $normalized->setWorkingDirectory($workingDirectory);
 
         $root = $this->projectRootLocator->locate($workingDirectory);
         $projectDirectory = $configuration->getProjectDirectory() ?: $root;
         $projectDirectory = $projectDirectory ?: $workingDirectory;
         $projectDirectory = $workingDirectory->resolve($projectDirectory);
-        $configuration->setProjectDirectory($projectDirectory);
+        $normalized->setProjectDirectory($projectDirectory);
 
-        if (!$configuration->getDataDirectory()) {
-            $configuration->setDataDirectory(Helper::getDefaultDataDirectory());
-        }
+        $targetDirectory = $configuration->getTargetDirectory();
+        $targetDirectory = $targetDirectory ?: $projectDirectory;
+        $normalized->setTargetDirectory($targetDirectory);
+
+        $dataDirectory = $configuration->getDataDirectory();
+        $dataDirectory = $dataDirectory ?: Helper::getDefaultDataDirectory();
+        $normalized->setDataDirectory($dataDirectory);
 
         $logger = $configuration->getLogger();
-        $configuration->setLogger($this->normalizeLoggerConfiguration($logger));
-        return $configuration;
+        $normalized->setLogger($this->normalizeLoggerConfiguration($logger));
+        return $normalized;
     }
 
     private function normalizeLoggerConfiguration(

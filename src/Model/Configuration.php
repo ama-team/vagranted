@@ -8,7 +8,7 @@ use AmaTeam\Vagranted\Model\Configuration\LoggerConfiguration;
 /**
  * @author Etki <etki@etki.me>
  */
-class Configuration
+class Configuration implements ConfigurationInterface
 {
     /**
      * Directory of the project that requires vagranted support.

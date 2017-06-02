@@ -9,8 +9,11 @@ namespace AmaTeam\Vagranted\DI;
  */
 class References
 {
+    const BOOTSTRAP_CONFIGURATION = 'vagranted.configuration.bootstrap';
+    const CONTAINER = 'vagranted.container';
+
     const VERSION_PROVIDER = 'vagranted.version_provider';
-    const CONFIGURATION = 'vagranted.configuration.container';
+    const CONFIGURATION = 'vagranted.configuration';
     const CONFIGURATION_DISTRIBUTOR = 'vagranted.configuration.distributor';
     const LOGGER_FACTORY = 'vagranted.logger.factory';
     const LOGGER_NAME_FACTORY = 'vagranted.logger.name_factory';

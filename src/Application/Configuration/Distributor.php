@@ -4,7 +4,7 @@ namespace AmaTeam\Vagranted\Application\Configuration;
 
 use AmaTeam\Vagranted\Event\EventDispatcherAwareInterface;
 use AmaTeam\Vagranted\Event\EventDispatcherAwareTrait;
-use AmaTeam\Vagranted\Model\Configuration;
+use AmaTeam\Vagranted\Model\ConfigurationInterface;
 use AmaTeam\Vagranted\Model\ReconfigurableInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -32,7 +32,7 @@ class Distributor implements EventDispatcherAwareInterface, LoggerAwareInterface
         $this->services = $services;
     }
 
-    public function distribute(Configuration $configuration)
+    public function distribute(ConfigurationInterface $configuration)
     {
         $this->logger->notice('Distributing new configuration among services');
         foreach ($this->services as $service) {

@@ -14,6 +14,7 @@ use AmaTeam\Vagranted\DI\Pass\Logger\FactoryPass;
 use AmaTeam\Vagranted\DI\Pass\Logger\LoggerInjectionPass;
 use AmaTeam\Vagranted\DI\Pass\Serialization\SerializerPass;
 use AmaTeam\Vagranted\DI\Pass\Twig\ExtensionCollectionPass;
+use AmaTeam\Vagranted\DI\References;
 use AmaTeam\Vagranted\DI\Tags;
 use AmaTeam\Vagranted\Filesystem\Helper;
 use AmaTeam\Vagranted\Model\Configuration;
@@ -131,8 +132,11 @@ class Builder
         $this->loadExternalDefinitions();
         $this->registerCompilerPasses();
         $this->registerExtensions();
-        $this->container->set('vagranted.configuration', $this->configuration);
-        $this->container->set('vagranted.container', $this->container);
+        $this->container->set(
+            References::BOOTSTRAP_CONFIGURATION,
+            $this->configuration
+        );
+        $this->container->set(References::CONTAINER, $this->container);
         if ($this->compileContainer) {
             $this->container->compile();
         }

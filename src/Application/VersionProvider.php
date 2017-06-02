@@ -15,10 +15,12 @@ class VersionProvider
      * @var Structure
      */
     private $structure;
+
     /**
      * @var AccessorInterface
      */
     private $filesystem;
+
     /**
      * @var Serializer
      */

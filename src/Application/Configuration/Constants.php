@@ -13,4 +13,8 @@ class Constants
     const INSTALLATION_STATISTICS_FILE = 'statistics.yml';
     const INSTALLATION_ARTIFACT_DIRECTORY = 'artifact';
     const LOCAL_SCHEMAS = ['fs', 'file', 'local'];
+
+    const CACHE_DIRECTORY = 'cache';
+    const RESOURCE_SET_DIRECTORY = 'resource-sets';
+    const CONFIGURATION_DIRECTORY = 'resources/configuration';
 }

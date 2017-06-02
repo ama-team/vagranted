@@ -2,7 +2,7 @@
 
 namespace AmaTeam\Vagranted\Project;
 
-use AmaTeam\Vagranted\Application\Configuration\Container;
+use AmaTeam\Vagranted\Model\ConfigurationInterface;
 use AmaTeam\Vagranted\Model\Filesystem\Workspace;
 use AmaTeam\Vagranted\Model\Project;
 use AmaTeam\Vagranted\ResourceSet\Reader;
@@ -18,16 +18,18 @@ class Loader
     private $reader;
 
     /**
-     * @var Container
+     * @var ConfigurationInterface
      */
     private $configuration;
 
     /**
      * @param Reader $reader
-     * @param Container $configuration
+     * @param ConfigurationInterface $configuration
      */
-    public function __construct(Reader $reader, Container $configuration)
-    {
+    public function __construct(
+        Reader $reader,
+        ConfigurationInterface $configuration
+    ) {
         $this->reader = $reader;
         $this->configuration = $configuration;
     }
@@ -39,7 +41,7 @@ class Loader
      */
     public function load()
     {
-        $path = $this->configuration->get()->getProjectDirectory();
+        $path = $this->configuration->getProjectDirectory();
         return (new Project())
             ->setWorkspace(new Workspace($path))
             ->setSet($this->reader->read($path));

@@ -10,8 +10,8 @@ namespace AmaTeam\Vagranted\Model;
 interface ReconfigurableInterface
 {
     /**
-     * @param Configuration $configuration
+     * @param ConfigurationInterface $configuration
      * @return void
      */
-    public function reconfigure(Configuration $configuration);
+    public function reconfigure(ConfigurationInterface $configuration);
 }

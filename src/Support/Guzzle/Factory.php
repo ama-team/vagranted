@@ -2,7 +2,7 @@
 
 namespace AmaTeam\Vagranted\Support\Guzzle;
 
-use AmaTeam\Vagranted\Application\Configuration\Container;
+use AmaTeam\Vagranted\Model\ConfigurationInterface;
 use GuzzleHttp\Client;
 
 /**
@@ -11,14 +11,14 @@ use GuzzleHttp\Client;
 class Factory
 {
     /**
-     * @var Container
+     * @var ConfigurationInterface
      */
     private $configuration;
 
     /**
-     * @param Container $configuration
+     * @param ConfigurationInterface $configuration
      */
-    public function __construct(Container $configuration)
+    public function __construct(ConfigurationInterface $configuration)
     {
         $this->configuration = $configuration;
     }

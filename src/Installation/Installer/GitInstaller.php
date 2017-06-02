@@ -2,7 +2,7 @@
 
 namespace AmaTeam\Vagranted\Installation\Installer;
 
-use AmaTeam\Vagranted\Application\Configuration\Container;
+use AmaTeam\Vagranted\Model\ConfigurationInterface;
 use AmaTeam\Vagranted\Model\Installation\DescribedInstallerInterface;
 use AmaTeam\Vagranted\Model\Installation\Description;
 use AmaTeam\Vagranted\Model\Installation\Specification;
@@ -26,7 +26,7 @@ class GitInstaller implements
     const SCHEME_PATTERN = '~^git\+(\w+)://~';
 
     /**
-     * @var Container
+     * @var ConfigurationInterface
      */
     private $configuration;
 
@@ -36,11 +36,11 @@ class GitInstaller implements
     private $factory;
 
     /**
-     * @param Container $configuration
+     * @param ConfigurationInterface $configuration
      * @param Factory $factory
      */
     public function __construct(
-        Container $configuration,
+        ConfigurationInterface $configuration,
         Factory $factory
     ) {
         $this->configuration = $configuration;
@@ -171,7 +171,7 @@ class GitInstaller implements
      */
     private function computeGitBinary()
     {
-        $extras = $this->configuration->get()->getExtras() ?: [];
+        $extras = $this->configuration->getExtras() ?: [];
         $key = 'installer.git.binary';
         return isset($extras[$key]) ? $extras[$key] : 'git';
     }

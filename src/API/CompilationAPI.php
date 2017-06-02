@@ -2,8 +2,8 @@
 
 namespace AmaTeam\Vagranted\API;
 
-use AmaTeam\Vagranted\Application\Configuration\Container;
 use AmaTeam\Vagranted\Compilation\Controller;
+use AmaTeam\Vagranted\Model\ConfigurationInterface;
 use AmaTeam\Vagranted\Model\Filesystem\Workspace;
 use AmaTeam\Vagranted\Project\Loader;
 
@@ -18,7 +18,7 @@ class CompilationAPI
     private $controller;
 
     /**
-     * @var Container
+     * @var ConfigurationInterface
      */
     private $configuration;
 
@@ -29,12 +29,12 @@ class CompilationAPI
 
     /**
      * @param Controller $controller
-     * @param Container $configuration
+     * @param ConfigurationInterface $configuration
      * @param Loader $loader
      */
     public function __construct(
         Controller $controller,
-        Container $configuration,
+        ConfigurationInterface $configuration,
         Loader $loader
     ) {
         $this->controller = $controller;
@@ -48,7 +48,7 @@ class CompilationAPI
     public function compile()
     {
         $project = $this->loader->load();
-        $path = $this->configuration->get()->getTargetDirectory();
+        $path = $this->configuration->getTargetDirectory();
         $target = new Workspace($path);
         $this->controller->compile($project, $target);
     }

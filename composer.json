@@ -49,7 +49,7 @@
   "scripts": {
     "test": "codecept build && codecept run --coverage --coverage-xml --coverage-html --xml",
     "test:report:publish": "composer test:report:publish:coverage",
-    "test:report:publish:coverage": "coveralls"
+    "test:report:publish:coverage": "bin/coveralls"
   },
   "config": {
     "bin-dir": "bin"

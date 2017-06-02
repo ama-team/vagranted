@@ -3,13 +3,15 @@
 namespace AmaTeam\Vagranted\Application\Configuration;
 
 use AmaTeam\Vagranted\Model\Configuration;
+use AmaTeam\Vagranted\Model\ConfigurationInterface;
+use AmaTeam\Vagranted\Model\ConfigurationWrapper;
 
 /**
  * Simple configuration wrapper
  *
  * @author Etki <etki@etki.me>
  */
-class Container
+class Container extends ConfigurationWrapper
 {
     /**
      * @var Normalizer
@@ -22,11 +24,6 @@ class Container
     private $manager;
 
     /**
-     * @var Configuration
-     */
-    private $configuration;
-
-    /**
      * @param Normalizer $normalizer
      * @param Distributor $manager
      * @param Configuration|null $defaults
@@ -36,20 +33,17 @@ class Container
         Distributor $manager,
         Configuration $defaults = null
     ) {
+        parent::__construct();
         $this->normalizer = $normalizer;
         $this->manager = $manager;
-        $this->set($defaults ?: new Configuration());
+        $this->setEnclosure($defaults ?: new Configuration());
     }
 
-    public function set(Configuration $configuration)
+    public function setEnclosure(ConfigurationInterface $configuration)
     {
-        $this->configuration = $this->normalizer->normalize($configuration);
-        $this->manager->distribute($this->configuration);
+        $configuration = $this->normalizer->normalize($configuration);
+        parent::setEnclosure($configuration);
+        $this->manager->distribute($this);
         return $this;
-    }
-
-    public function get()
-    {
-        return $this->configuration;
     }
 }

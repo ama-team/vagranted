@@ -3,11 +3,11 @@
 namespace AmaTeam\Vagranted\Console;
 
 use AmaTeam\Vagranted\Application\Configuration\Defaults;
-use AmaTeam\Vagranted\Application\Configuration\Container as ConfigurationContainer;
 use AmaTeam\Vagranted\Console\Command as Commands;
 use AmaTeam\Vagranted\Event\EventDispatcherAwareInterface;
 use AmaTeam\Vagranted\DI\References;
 use AmaTeam\Vagranted\Application\VersionProvider;
+use AmaTeam\Vagranted\Model\ConfigurationWrapper;
 use Symfony\Component\Console\Application as ApplicationBase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\ConsoleEvents;
@@ -116,9 +116,9 @@ class Application extends ApplicationBase implements
         $callback = function (ConsoleCommandEvent $event) {
             $extractor = new ConfigurationExtractor();
             $configuration = $extractor->extract($event->getInput());
-            /** @var ConfigurationContainer $provider */
+            /** @var ConfigurationWrapper $provider */
             $provider = $this->container->get(References::CONFIGURATION);
-            $provider->set($configuration);
+            $provider->setEnclosure($configuration);
         };
         $this->dispatcher->addListener(ConsoleEvents::COMMAND, $callback);
         return parent::doRun($input, $output);

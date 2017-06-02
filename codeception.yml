@@ -3,7 +3,7 @@ paths:
     tests: tests/Suite
     log: tests/Report
     data: tests/Data
-    support: tests/Support
+    support: tests/Support/Codeception
     envs: tests/Environments
 settings:
     bootstrap: _bootstrap.php

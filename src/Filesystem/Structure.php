@@ -3,7 +3,8 @@
 namespace AmaTeam\Vagranted\Filesystem;
 
 use AmaTeam\Pathetic\Path;
-use AmaTeam\Vagranted\Application\Configuration\Container;
+use AmaTeam\Vagranted\Application\Configuration\Constants;
+use AmaTeam\Vagranted\Model\ConfigurationInterface;
 
 /**
  * Provides other classes with various locations.
@@ -13,44 +14,45 @@ use AmaTeam\Vagranted\Application\Configuration\Container;
 class Structure
 {
     /**
-     * @var Container
+     * @var ConfigurationInterface
      */
     private $configuration;
 
     /**
-     * @param Container $configuration
+     * @param ConfigurationInterface $configuration
      */
-    public function __construct(Container $configuration)
+    public function __construct(ConfigurationInterface $configuration)
     {
         $this->configuration = $configuration;
     }
 
     public function getDataDirectory()
     {
-        return Path::parse($this->configuration->get()->getDataDirectory());
+        return Path::parse($this->configuration->getDataDirectory());
     }
 
     public function getInstallationDirectory()
     {
-        // todo hardcode
-        return $this->getDataDirectory()->resolve('resource-sets');
+        return $this
+            ->getDataDirectory()
+            ->resolve(Constants::RESOURCE_SET_DIRECTORY);
     }
 
     public function getCacheDirectory()
     {
-        // todo hardcode
-        return $this->getDataDirectory()->resolve('cache');
+        return $this->getDataDirectory()->resolve(Constants::CACHE_DIRECTORY);
     }
 
     public function getWorkingDirectory()
     {
-        return Path::parse($this->configuration->get()->getWorkingDirectory());
+        return Path::parse($this->configuration->getWorkingDirectory());
     }
 
     public function getConfigurationDirectory()
     {
-        // todo hardcode
-        return $this->getProjectDirectory()->resolve('resources/configuration');
+        return $this
+            ->getProjectDirectory()
+            ->resolve(Constants::CONFIGURATION_DIRECTORY);
     }
 
     public function getSourceDirectory()
@@ -60,6 +62,6 @@ class Structure
 
     public function getProjectDirectory()
     {
-        return Path::parse($this->configuration->get()->getProjectDirectory());
+        return Path::parse($this->configuration->getProjectDirectory());
     }
 }

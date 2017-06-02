@@ -5,10 +5,10 @@ namespace AmaTeam\Vagranted;
 use AmaTeam\Vagranted\API\CompilationAPI;
 use AmaTeam\Vagranted\API\InstallerAPI;
 use AmaTeam\Vagranted\API\ResourceSetAPI;
-use AmaTeam\Vagranted\Application\Configuration\Container;
 use AmaTeam\Vagranted\Console\Application;
 use AmaTeam\Vagranted\DI\References;
 use AmaTeam\Vagranted\Application\VersionProvider;
+use AmaTeam\Vagranted\Model\ConfigurationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -101,17 +101,12 @@ class API
     }
 
     /**
-     * @return Container
+     * @return ConfigurationInterface
      */
-    public function getConfigurationContainer()
-    {
-        /** @var Container $container */
-        $container = $this->container->get(References::CONFIGURATION);
-        return $container;
-    }
-
     public function getConfiguration()
     {
-        return $this->getConfigurationContainer()->get();
+        /** @var ConfigurationInterface $container */
+        $container = $this->container->get(References::CONFIGURATION);
+        return $container;
     }
 }

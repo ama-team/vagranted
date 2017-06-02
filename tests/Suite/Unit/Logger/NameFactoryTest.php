@@ -8,7 +8,7 @@ use Codeception\Test\Unit;
 /**
  * @author Etki <etki@etki.me>
  */
-class NameExtractorTest extends Unit
+class NameFactoryTest extends Unit
 {
     public function dataProvider()
     {
@@ -17,7 +17,8 @@ class NameExtractorTest extends Unit
             ['test_Name', 'test_name',],
             ['testName', 'test_name',],
             ['Test\\Name', 'test.name',],
-            ['Prefix\\Pit\\Test\\Name', 'test.name', ['Prefix\\Pit\\']],
+            ['Prefix\\Pit\\Test\\Name', 'test.name', ['Prefix\\Pit\\',],],
+            ['\\Prefix\\Pit\\Test\\Name', 'test.name', ['Prefix\\Pit\\',],],
             ['test_name', 'prefix.test_name', [], 'prefix.'],
         ];
     }

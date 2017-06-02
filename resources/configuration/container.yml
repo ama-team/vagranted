@@ -1,7 +1,7 @@
 # Container has to be bootstrapped with:
 # - vagranted.container
 # Optional dependencies are:
-# - vagranted.configuration (AmaTeam\Vagranted\Configuration)
+# - vagranted.configuration.bootstrap (AmaTeam\Vagranted\Configuration)
 
 parameters:
   vagranted.logger.format: "%%datetime%% %%level_name%% %%channel%%: %%message%%\n"
@@ -21,19 +21,19 @@ services:
     tags:
       - name: vagranted.event.producer
       - name: vagranted.logger.consumer
-  vagranted.configuration.container:
+  vagranted.configuration:
     class: AmaTeam\Vagranted\Application\Configuration\Container
     arguments:
       - '@vagranted.configuration.normalizer'
       - '@vagranted.configuration.distributor'
-      - '@?vagranted.configuration'
+      - '@?vagranted.configuration.bootstrap'
   # endregion
 
   # region vagranted
   vagranted.structure:
     class: AmaTeam\Vagranted\Filesystem\Structure
     arguments:
-      - '@vagranted.configuration.container'
+      - '@vagranted.configuration'
   vagranted.version_provider:
     class: AmaTeam\Vagranted\Application\VersionProvider
     arguments:
@@ -143,15 +143,15 @@ services:
   vagranted.support.git.factory:
     class: AmaTeam\Vagranted\Support\Git\Factory
     arguments:
-      - '@vagranted.configuration.container'
+      - '@vagranted.configuration'
   vagranted.support.zippy.factory:
     class: AmaTeam\Vagranted\Support\Zippy\Factory
     arguments:
-      - '@vagranted.configuration.container'
+      - '@vagranted.configuration'
   vagranted.support.guzzle.factory:
     class: AmaTeam\Vagranted\Support\Guzzle\Factory
     arguments:
-      - '@vagranted.configuration.container'
+      - '@vagranted.configuration'
   # endregion
 
   # region vagranted.project
@@ -159,7 +159,7 @@ services:
     class: AmaTeam\Vagranted\Project\Loader
     arguments:
       - '@vagranted.resource_set.reader'
-      - '@vagranted.configuration.container'
+      - '@vagranted.configuration'
   # endregion
 
   # region vagranted.resource_set
@@ -217,7 +217,7 @@ services:
   vagranted.installation.installer.git:
     class: AmaTeam\Vagranted\Installation\Installer\GitInstaller
     arguments:
-      - '@vagranted.configuration.container'
+      - '@vagranted.configuration'
       - '@vagranted.support.git.factory'
     tags:
       - name: vagranted.resource_set.installer
@@ -326,7 +326,7 @@ services:
     class: AmaTeam\Vagranted\API\CompilationAPI
     arguments:
       - '@vagranted.compilation.controller'
-      - '@vagranted.configuration.container'
+      - '@vagranted.configuration'
       - '@vagranted.project.loader'
   vagranted.api.resource_set:
     class: AmaTeam\Vagranted\API\ResourceSetAPI

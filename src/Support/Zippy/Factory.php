@@ -3,7 +3,7 @@
 namespace AmaTeam\Vagranted\Support\Zippy;
 
 use Alchemy\Zippy\Zippy;
-use AmaTeam\Vagranted\Application\Configuration\Container;
+use AmaTeam\Vagranted\Model\ConfigurationInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
@@ -17,14 +17,14 @@ class Factory implements LoggerAwareInterface
     const PREFIX = 'zippy.';
 
     /**
-     * @var Container
+     * @var ConfigurationInterface
      */
     private $configuration;
 
     /**
-     * @param Container $configuration
+     * @param ConfigurationInterface $configuration
      */
-    public function __construct(Container $configuration)
+    public function __construct(ConfigurationInterface $configuration)
     {
         $this->configuration = $configuration;
     }
@@ -36,7 +36,7 @@ class Factory implements LoggerAwareInterface
     public function create(array $configuration = [])
     {
         $zippy = Zippy::load();
-        foreach ($this->configuration->get()->getExtras() as $key => $value) {
+        foreach ($this->configuration->getExtras() as $key => $value) {
             if (!strpos($key, self::PREFIX) === 0) {
                 continue;
             }

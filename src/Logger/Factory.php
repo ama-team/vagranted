@@ -2,7 +2,7 @@
 
 namespace AmaTeam\Vagranted\Logger;
 
-use AmaTeam\Vagranted\Model\Configuration;
+use AmaTeam\Vagranted\Model\ConfigurationInterface;
 use AmaTeam\Vagranted\Model\ReconfigurableInterface;
 use Monolog\Handler\AbstractHandler;
 use Monolog\Handler\HandlerInterface;
@@ -75,7 +75,7 @@ class Factory implements FactoryInterface, ReconfigurableInterface
         }
     }
 
-    public function reconfigure(Configuration $configuration)
+    public function reconfigure(ConfigurationInterface $configuration)
     {
         foreach ($this->handlers as $handler) {
             if ($handler instanceof AbstractHandler) {

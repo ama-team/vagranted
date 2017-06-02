@@ -34,6 +34,7 @@ class NameFactory
      */
     public function convert($class)
     {
+        $class = ltrim($class, '\\');
         foreach ($this->namespaces as $prefix) {
             if (strpos($class, $prefix) === 0) {
                 $class = substr($class, strlen($prefix));
@@ -43,7 +44,7 @@ class NameFactory
         trim($class, '\\');
         $patterns = [
             '~\\\\+(\w)~',
-            '~([a-z])([A-Z])~'
+            '~([a-z])([A-Z])~',
         ];
         $replacements = [
             '.$1',
